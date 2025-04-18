@@ -3,8 +3,9 @@ import { ActorDetails } from '../types/actors';
 import { TVShow } from '../types/tv';
 
 // src/api/tmdb.ts
-const TMDB_API_KEY = "15868e2eb23a1b5d4bcd160fe30d1614"; // Replace with your actual key
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; // Replace with your actual key
 const BASE_URL = "https://api.themoviedb.org/3";
+
 
 interface TmdbMovie {
   id: number;
