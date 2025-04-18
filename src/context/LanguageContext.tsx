@@ -68,11 +68,11 @@ export const LanguageProvider: React.FC<{children: React.ReactNode}> = ({ childr
     setIsDetectingLocation(true);
     try {
       // First try browser language
-      const browserLanguage = navigator.languages?.[0]?.split('-')[0];
+    /*  const browserLanguage = navigator.languages?.[0]?.split('-')[0];
       if (browserLanguage === 'es') {
         setLanguage('es');
         return;
-      }
+      }*/
 
       // Fallback to IP geolocation
       const response = await fetch('https://ipapi.co/json/');
@@ -82,6 +82,8 @@ export const LanguageProvider: React.FC<{children: React.ReactNode}> = ({ childr
         console.error('IPAPI Error:', data.reason);
         return;
       }
+
+      console.log('Geolocation data:', data); // Debug log
 
       setDetectedCountry(data.country_name);
       

@@ -10,8 +10,10 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { useState } from 'react';
 import { searchMovies } from '../api/movies';
 import { searchMulti } from '../api/tmdb';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function HomePage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { 
     popularMovies, 
@@ -75,8 +77,8 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Discover Movies & TV Shows</h1>
-        <p className="text-lg mb-6">Browse popular content from around the world</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('discover.title')}</h1>
+        <p className="text-lg mb-6">{t('discover.subtitle')}</p>
           
           <SearchBar 
             query={query}

@@ -1,8 +1,11 @@
 // src/hooks/useTmdbMovies.ts
 import { useState, useEffect,useCallback } from 'react';
 import { fetchPopularMovies,fetchNowPlayingMovies,fetchUpcomingMovies,fetchMovieDetails, mapTmdbToMovie } from '../api/tmdb';
+import { useLanguage } from '../context/LanguageContext';
+import { getApiLanguageCode } from '../utils/languageUtils';
 
 export const useTmdbMovies = () => {
+  const { language } = useLanguage();
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
@@ -10,17 +13,19 @@ export const useTmdbMovies = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
+  
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchMovies = async (lang:string) => {
       try {
         setLoading(true);
+        const apiLanguage = getApiLanguageCode(lang);
         
         // Fetch both popular and upcoming movies in parallel
         const [popularResponse, upcomingResponse, nowPlayingResponse, movieDetailsResponse] = await Promise.all([
-          fetchPopularMovies(),
-          fetchUpcomingMovies(),
-          fetchNowPlayingMovies(),
+          fetchPopularMovies(1, apiLanguage),
+          fetchUpcomingMovies(1,apiLanguage),
+          fetchNowPlayingMovies(1,apiLanguage),
         
         ]);
 
@@ -35,7 +40,7 @@ export const useTmdbMovies = () => {
       }
     };
 
-    fetchMovies();
+    fetchMovies(language);
   }, []);
 
   

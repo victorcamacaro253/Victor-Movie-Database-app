@@ -7,6 +7,8 @@ import ActorCard from '../components/ActorCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import {ErrorMessage} from '../components/ErrorMessage';
 import { StarIcon, ClockIcon, CalendarIcon, DollarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
+import { getApiLanguageCode } from '../utils/languageUtils';
+
 
 export default function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,10 +18,14 @@ export default function MovieDetailsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchMovie = async () => {
+    const fetchMovie = async (lang : string) => {
+
       try {
         setLoading(true);
-        const data = await fetchMovieDetails(id!);
+        const apiLanguage = getApiLanguageCode(lang);
+        console.log('language',apiLanguage)
+        const data = await fetchMovieDetails(id!,apiLanguage);
+        console.log(data)
         if (data) setMovie(data);
         else setError("Movie not found");
       } catch (err) {

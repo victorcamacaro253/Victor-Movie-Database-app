@@ -35,9 +35,9 @@ export const fetchPopularMovies = async (page: number = 1, language: string = 'e
   return await response.json();
 };
 
-export const fetchUpcomingMovies = async (page:number = 1): Promise<TmdbResponse> => {
+export const fetchUpcomingMovies = async (page:number = 1, language: string = 'en-US'): Promise<TmdbResponse> => {
   const response = await fetch(
-    `${BASE_URL}/movie/upcoming?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`
+    `${BASE_URL}/movie/upcoming?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
   );
   if (!response.ok) {
     throw new Error('Failed to fetch upcoming movies');
@@ -46,10 +46,10 @@ export const fetchUpcomingMovies = async (page:number = 1): Promise<TmdbResponse
 };
 
 
-export const fetchTopRatedMovies = async (page: number = 1): Promise<Movie[]> => {
+export const fetchTopRatedMovies = async (page: number = 1, language: string = 'en-US'): Promise<Movie[]> => {
     try {
       const response = await fetch(
-        `${BASE_URL}/movie/top_rated?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`
+        `${BASE_URL}/movie/top_rated?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
       );
       
       if (!response.ok) {
@@ -64,10 +64,10 @@ export const fetchTopRatedMovies = async (page: number = 1): Promise<Movie[]> =>
     }
   };
 
-  export const fetchNowPlayingMovies = async (page: number = 1): Promise<Movie[]> => {
+  export const fetchNowPlayingMovies = async (page: number = 1,language: string = 'en-US'): Promise<Movie[]> => {
     try {
       const response = await fetch(
-        `${BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`
+        `${BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
       );
       
       if (!response.ok) {
@@ -82,10 +82,10 @@ export const fetchTopRatedMovies = async (page: number = 1): Promise<Movie[]> =>
     }
   };
 
-  export const searchMovies = async (query: string, page: number = 1): Promise<Movie[]> => {
+  export const searchMovies = async (query: string, page: number = 1,language: string = 'en-US'): Promise<Movie[]> => {
     try {
       const response = await fetch(
-        `${BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=en-US&query=${encodeURIComponent(query)}&page=${page}`
+        `${BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=${language}&query=${encodeURIComponent(query)}&page=${page}`
       );
       
       if (!response.ok) {
@@ -133,10 +133,10 @@ export const searchMulti = async (query: string): Promise<SearchResult[]> => {
     }).filter(Boolean);
   };
 
-  export const fetchMovieDetails = async (movieId: number): Promise<Movie> => {
+  export const fetchMovieDetails = async (movieId: number,language: string = 'en-US'): Promise<Movie> => {
     try {
       const response = await fetch(
-        `${BASE_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=credits,videos`
+        `${BASE_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos`
       );
       
       if (!response.ok) {
