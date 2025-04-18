@@ -1,6 +1,7 @@
 import { Movie } from '../types/movie'; // Adjust the import path as necessary
 import { ActorDetails } from '../types/actors';
 import { TVShow } from '../types/tv';
+import { useLanguage } from '../context/LanguageContext';
 
 // src/api/tmdb.ts
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; // Replace with your actual key
@@ -24,9 +25,9 @@ export interface TmdbResponse {
   total_results: number;
 }
 
-export const fetchPopularMovies = async (page: number = 1): Promise<TmdbResponse> => {
+export const fetchPopularMovies = async (page: number = 1, language: string = 'en-US'): Promise<TmdbResponse> => {
   const response = await fetch(
-    `${BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`
+    `${BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
   );
   if (!response.ok) {
     throw new Error('Failed to fetch popular movies');
@@ -55,8 +56,8 @@ export const fetchTopRatedMovies = async (page: number = 1): Promise<Movie[]> =>
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
-      return data.results.map(mapTmdbToMovie);
+       
+      return await response.json();
     } catch (error) {
       console.error('Error fetching top rated movies:', error);
       throw error;

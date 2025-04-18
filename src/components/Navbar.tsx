@@ -1,5 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { FilmIcon, StarIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon } from '../components/Icons';
+import { getFlagEmoji, getLanguageName } from '../utils/languageUtils';
+import LoadingSpinner from './LoadingSpinner';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   theme: 'light' | 'dark';
@@ -7,6 +10,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ theme, toggleTheme }: NavbarProps) {
+  const { language, setLanguage, isDetectingLocation } = useLanguage();
   const location = useLocation();
   
   // Check if current route is active
@@ -63,6 +67,26 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-3">
+             {/* Language Switcher */}
+             <div className="relative">
+              {isDetectingLocation ? (
+                <div className="px-3 py-1">
+                  <LoadingSpinner size="sm" />
+                </div>
+              ) : (
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as Language)}
+                  className={`appearance-none bg-transparent border ${
+                    theme === 'dark' ? 'border-gray-600 text-white' : 'border-gray-300 text-gray-800'
+                  } rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                >
+                  <option value="en">{getFlagEmoji('en')} English</option>
+                  <option value="es">{getFlagEmoji('es')} Español</option>
+                </select>
+              )}
+            </div>
+
             <Link 
               to="/search" 
               className={`p-2 rounded-full ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} transition-colors`}

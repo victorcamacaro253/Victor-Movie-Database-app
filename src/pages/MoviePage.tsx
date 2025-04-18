@@ -1,14 +1,19 @@
 // src/pages/MoviesPage.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTmdbMovies } from '../hooks/useTmdbMovies';
 import MovieCard from '../components/MovieCard';
 import SectionHeader from '../components/SectionHeader';
 import LoadingSpinner from '../components/LoadingSpinner';
 import {ErrorMessage} from '../components/ErrorMessage';
 import DropdownFilter from '../components/DropdownFilter';
 import Pagination from '../components/Pagination';
-import { Movie } from '../types/movie';
+import { 
+  fetchPopularMovies,
+  fetchUpcomingMovies,
+  fetchTopRatedMovies,
+  fetchNowPlayingMovies,
+  mapTmdbToMovie
+} from '../api/tmdb';
 
 const movieCategories = [
   { value: 'popular', label: 'Popular' },
@@ -40,35 +45,61 @@ export default function MoviesPage() {
   const [year, setYear] = useState('');
   const [sortBy, setSortBy] = useState('popularity.desc');
   const [page, setPage] = useState(1);
-  
-  const { 
-    movies, 
-    totalPages,
-    loading, 
-    error,
-    fetchMovies
-  } = useTmdbMovies();
+  const [movies, setMovies] = useState<any[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchMovies(category, page, year, sortBy);
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        
+        let response;
+        switch (category) {
+          case 'popular':
+            response = await fetchPopularMovies(page);
+            break;
+          case 'now_playing':
+            response = await fetchNowPlayingMovies(page);
+            break;
+          case 'upcoming':
+            response = await fetchUpcomingMovies(page);
+            break;
+          case 'top_rated':
+            response = await fetchTopRatedMovies(page);
+            console.log('response:', response);
+            break;
+          default:
+            response = await fetchPopularMovies(page);
+        }
+
+        if (response.results) {
+          setMovies(response.results);
+          setTotalPages(response.total_pages || 1);
+        } else {
+          setMovies([]);
+        }
+      } catch (err) {
+        setError('Failed to fetch movies. Please try again later.');
+        console.error('Error fetching movies:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
   }, [category, page, year, sortBy]);
 
-  const handleMovieClick = (movie: Movie) => {
-    navigate(`/movie/${movie.id}`);
+  const handleMovieClick = (movieId: number) => {
+    navigate(`/movie/${movieId}`);
   };
 
   if (loading && !movies.length) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-4">
-        <ErrorMessage message={error} />
       </div>
     );
   }
@@ -116,6 +147,13 @@ export default function MoviesPage() {
           />
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6">
+            <ErrorMessage message={error} />
+          </div>
+        )}
+
         {/* Results */}
         <SectionHeader 
           title={movieCategories.find(c => c.value === category)?.label || 'Movies'}
@@ -128,8 +166,18 @@ export default function MoviesPage() {
               {movies.map((movie) => (
                 <MovieCard 
                   key={movie.id}
-                  movie={movie}
-                  onClick={() => handleMovieClick(movie)}
+                  movie={{
+                    Title: movie.title,
+                    Year: movie.release_date?.split('-')[0] || 'N/A',
+                    imdbID: movie.id.toString(),
+                    Type: 'movie',
+                    Poster: movie.poster_path 
+                      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                      : 'https://via.placeholder.com/300x450?text=No+Poster',
+                    vote_average: movie.vote_average,
+                    overview: movie.overview
+                  }}
+                  onClick={() => handleMovieClick(movie.id)}
                 />
               ))}
             </div>
@@ -143,7 +191,7 @@ export default function MoviesPage() {
         ) : (
           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-8 text-center">
             <p className="text-gray-500 dark:text-gray-400">
-              No movies found matching your criteria
+              {loading ? 'Loading movies...' : 'No movies found matching your criteria'}
             </p>
           </div>
         )}

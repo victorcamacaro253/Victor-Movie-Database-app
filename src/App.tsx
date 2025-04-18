@@ -9,6 +9,7 @@ import ActorDetailsPage from './pages/ActorDetails';
 import TVShowDetailsPage from './pages/TVShowDetails';
 import Footer from './components/Footer';
 import MoviePage from './pages/MoviePage';
+import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
   const [theme, setTheme] = useState<Theme>('light');
@@ -19,6 +20,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <LanguageProvider>
+      
       <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
         <Navbar theme={theme} toggleTheme={toggleTheme} />
         
@@ -34,6 +37,7 @@ function App() {
         </main>
         <Footer />
       </div>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }

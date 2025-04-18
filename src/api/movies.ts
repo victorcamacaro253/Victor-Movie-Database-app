@@ -1,7 +1,7 @@
 // src/api.ts
 import { Movie, MovieDetails } from "../types/movie";
 
-const API_KEY = "971a0a9b";
+const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = "https://www.omdbapi.com/";
 
 export const searchMovies = async (query: string, page: number = 1): Promise<{ movies: Movie[]; totalResults: number }> => {

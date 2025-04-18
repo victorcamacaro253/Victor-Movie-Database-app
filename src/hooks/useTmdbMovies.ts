@@ -9,6 +9,7 @@ export const useTmdbMovies = () => {
   const [movieDetails, setMovieDetails] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     const fetchMovies = async () => {
