@@ -1,5 +1,5 @@
 // src/components/Icons.tsx
-import React from 'react';
+
 
 export const StarIcon = ({ className }: { className?: string }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 20 20">

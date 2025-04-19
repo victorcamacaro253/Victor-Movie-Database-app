@@ -6,7 +6,7 @@ import { fetchTVShowDetails, fetchSeasonDetails } from '../api/tmdb'; // Adjust 
 import ActorCard from '../components/ActorCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { StarIcon, ClockIcon, CalendarIcon, DollarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
+import { StarIcon, ClockIcon, CalendarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
 
 export default function TVShowDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +21,7 @@ export default function TVShowDetailsPage() {
     const fetchTVShow = async () => {
       try {
         setLoading(true);
-        const data = await fetchTVShowDetails(id!); // Fetch TV show details
+        const data = await fetchTVShowDetails(Number(id)); // Fetch TV show details
         if (data) setTVShow(data);
         else setError("TV Show not found");
       } catch (err) {
@@ -37,7 +37,7 @@ export default function TVShowDetailsPage() {
     if (selectedSeason !== null) {
       const fetchSeason = async () => {
         try {
-          const data = await fetchSeasonDetails(id!, selectedSeason);
+          const data = await fetchSeasonDetails(Number(id), selectedSeason);
           setSeasonDetails(data);
         } catch (err) {
           console.error("Failed to fetch season details:", err);

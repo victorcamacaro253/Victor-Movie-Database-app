@@ -3,6 +3,7 @@ import { useState, useEffect,useCallback } from 'react';
 import { fetchPopularMovies,fetchNowPlayingMovies,fetchUpcomingMovies,fetchMovieDetails, mapTmdbToMovie } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
 import { getApiLanguageCode } from '../utils/languageUtils';
+import { Movie } from '../types/movie';
 
 export const useTmdbMovies = () => {
   const { language } = useLanguage();
@@ -22,7 +23,7 @@ export const useTmdbMovies = () => {
         const apiLanguage = getApiLanguageCode(lang);
         
         // Fetch both popular and upcoming movies in parallel
-        const [popularResponse, upcomingResponse, nowPlayingResponse, movieDetailsResponse] = await Promise.all([
+        const [popularResponse, upcomingResponse, nowPlayingResponse] = await Promise.all([
           fetchPopularMovies(1, apiLanguage),
           fetchUpcomingMovies(1,apiLanguage),
           fetchNowPlayingMovies(1,apiLanguage),
@@ -49,7 +50,7 @@ export const useTmdbMovies = () => {
     try {
       setLoading(true);
       const response = await fetchMovieDetails(movieId);
-      setMovieDetails(mapTmdbToMovie(response));
+      setMovieDetails(response);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch movie details');

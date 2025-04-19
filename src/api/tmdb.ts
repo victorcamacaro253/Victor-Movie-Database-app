@@ -1,7 +1,9 @@
-import { Movie } from '../types/movie'; // Adjust the import path as necessary
-import { ActorDetails } from '../types/actors';
-import { TVShow } from '../types/tv';
-import { useLanguage } from '../context/LanguageContext';
+import { Movie, SearchResult,MovieFinancials, MovieDetails } from '../types/movie'; // Adjust the import path as necessary
+import { ActorDetails, MovieCredit, TvCredit } from '../types/actors';
+import { TVShow, TVShowDetails } from '../types/tv';
+
+
+
 
 // src/api/tmdb.ts
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; // Replace with your actual key
@@ -64,7 +66,7 @@ export const fetchTopRatedMovies = async (page: number = 1, language: string = '
     }
   };
 
-  export const fetchNowPlayingMovies = async (page: number = 1,language: string = 'en-US'): Promise<Movie[]> => {
+  export const fetchNowPlayingMovies = async (page: number = 1,language: string = 'en-US'): Promise<TmdbResponse> => {
     try {
       const response = await fetch(
         `${BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
@@ -133,6 +135,7 @@ export const searchMulti = async (query: string): Promise<SearchResult[]> => {
     }).filter(Boolean);
   };
 
+  /*
   export const fetchMovieDetails = async (movieId: number,language: string = 'en-US'): Promise<Movie> => {
     try {
       const response = await fetch(
@@ -149,7 +152,41 @@ export const searchMulti = async (query: string): Promise<SearchResult[]> => {
       console.error('Error fetching movie details:', error);
       throw error;
     }
-  };
+  }; */
+
+  // Add or update this function in your tmdb.ts file
+export const fetchMovieDetails = async (id: number, language: string = 'en-US'): Promise<MovieDetails> => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar`
+    );
+    
+    if (!response.ok) {
+      throw new Error('Movie not found');
+    }
+    
+    const data = await response.json();
+    
+    // Transform the API response to match your MovieDetails interface
+    return {
+      ...data,
+      Title: data.title,
+      Year: data.release_date ? data.release_date.substring(0, 4) : '',
+      Type: 'movie',
+      Poster: data.poster_path ? `https://image.tmdb.org/t/p/w500${data.poster_path}` : '',
+      imdbID: data.imdb_id || '',
+      Response: 'True',
+      Ratings: data.vote_average ? [{ Source: 'TMDB', Value: `${data.vote_average}/10` }] : [],
+      Metascore: '',
+      imdbRating: data.vote_average ? (data.vote_average).toString() : '',
+      imdbVotes: data.vote_count ? data.vote_count.toString() : '',
+    };
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+    throw error;
+  }
+};
+
 
   export const fetchSimilarMovies = async (movieId: number, page: number = 1): Promise<Movie[]> => {
     try {
@@ -269,14 +306,17 @@ export const fetchEpisodeDetails = async (
 
 // Helper function to convert TMDb movie to your existing Movie type
 export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
+  id: tmdbMovie.id,
   Title: tmdbMovie.title,
   Year: tmdbMovie.release_date?.split('-')[0] || 'N/A',
   imdbID: tmdbMovie.id.toString(),
   Type: 'movie',
-  Poster: tmdbMovie.poster_path 
+  Poster: tmdbMovie.poster_path
     ? `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}`
     : 'https://via.placeholder.com/300x450?text=No+Poster',
-  // Map additional fields if needed
+ 
+  vote_average: 0,
+  release_date: tmdbMovie.release_date,
 });
 
 const mapTmdbToTVShow = (tvShow: any): TVShow => ({

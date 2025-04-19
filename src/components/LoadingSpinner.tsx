@@ -1,6 +1,7 @@
 // src/components/LoadingSpinner.tsx
 interface LoadingSpinnerProps {
     size?: 'sm' | 'md' | 'lg';
+    fullPage?: boolean; 
   }
   
   export default function LoadingSpinner({ size = 'md' }: LoadingSpinnerProps) {

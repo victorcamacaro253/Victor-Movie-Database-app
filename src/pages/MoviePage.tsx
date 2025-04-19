@@ -12,7 +12,7 @@ import {
   fetchUpcomingMovies,
   fetchTopRatedMovies,
   fetchNowPlayingMovies,
-  mapTmdbToMovie
+
 } from '../api/tmdb';
 
 const movieCategories = [
@@ -75,7 +75,7 @@ export default function MoviesPage() {
             response = await fetchPopularMovies(page);
         }
 
-        if (response.results) {
+        if ('results' in response && response.results) {
           setMovies(response.results);
           setTotalPages(response.total_pages || 1);
         } else {
@@ -167,6 +167,7 @@ export default function MoviesPage() {
                 <MovieCard 
                   key={movie.id}
                   movie={{
+                    id: movie.id,
                     Title: movie.title,
                     Year: movie.release_date?.split('-')[0] || 'N/A',
                     imdbID: movie.id.toString(),

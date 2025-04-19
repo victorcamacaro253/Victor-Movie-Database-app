@@ -1,6 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FilmIcon, StarIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon } from '../components/Icons';
-import { getFlagEmoji, getLanguageName } from '../utils/languageUtils';
+import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon } from '../components/Icons';
+import { getFlagEmoji } from '../utils/languageUtils';
+
+// Define or import the Language type
+type Language = 'en' | 'es'; // Add more language codes as needed
 import LoadingSpinner from './LoadingSpinner';
 import { useLanguage } from '../context/LanguageContext';
 

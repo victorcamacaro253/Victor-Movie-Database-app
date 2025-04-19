@@ -1,13 +1,16 @@
 // src/types.ts
 export interface Movie {
-    title: string; // Changed from Title to title
-    year: string; // Changed from Year to year
+    Title: string; // Changed from Title to title
+    Year: string; // Changed from Year to year
     id: number; // Changed from imdbID to id (TMDB uses id)
-    type: string; // This may not be necessary if not used
-    poster_path: string; // This is correct
+    Type: string; // This may not be necessary if not used
+    Poster: string; // This is correct
     rating?: number; // This may not be necessary if not used
     overview?: string; // This is correct
     imdbID: string;
+    vote_average: number; // Changed from imdbRating to vote_average
+    results ?: Movie[]; // Added based on the API response
+    release_date ?: string; // Added based on the API response
    
 }
 
@@ -51,10 +54,23 @@ export interface MovieDetails extends Movie {
       imdbVotes: string;
       DVD?: string;
       BoxOffice?: string;
+      poster_path: string; // Added based on the API response
       Production?: string;
       Website?: string;
       Response: string;
       imdbID: string;
+      videos?: {
+        results: {
+          id: string;
+          key: string;
+          name: string;
+          site: string;
+          type: string;
+        }[];
+      };
+      similar?: {
+        results: { id: number; title: string; release_date: string; vote_average: number; poster_path: string | null }[];
+      };
 }
 
 
@@ -70,3 +86,12 @@ export type SearchResult = {
   };
 
 export type Theme = "light" | "dark";
+
+
+// Define or import the MovieFinancials interface
+export interface MovieFinancials {
+    budget: number;
+    revenue: number;
+    currency: string;
+    releaseDate: string;
+  }

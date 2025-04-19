@@ -8,9 +8,10 @@ import SectionHeader from '../components/SectionHeader';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useState } from 'react';
-import { searchMovies } from '../api/movies';
+//import { searchMovies } from '../api/movies';
 import { searchMulti } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
+import { SearchResult } from '../types/movie';
 
 export default function HomePage() {
   const { t } = useLanguage();

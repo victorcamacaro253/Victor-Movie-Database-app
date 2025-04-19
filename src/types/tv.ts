@@ -7,9 +7,18 @@ export interface TVShow {
     poster_path: string;
     first_air_date: string;
     vote_average: number;
+    backdrop_path:string;
+    vote_count: number;
+    popularity: number;
+    original_language: string;
+    original_name: string;
+    genre_ids: number[];
+    
+    origin_country: string[];
   }
   
   export interface TVShowDetails extends TVShow {
+    backdrop_path: any;
     genres: {
       id: number;
       name: string;

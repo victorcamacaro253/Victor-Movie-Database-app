@@ -4,6 +4,7 @@ import { Movie } from "../types/movie";
 interface MovieCardProps {
   movie: Movie;
   onClick: () => void;
+  onRemove?: () => void; // Add onRemove as an optional property
 }
 
 export default function MovieCard({ movie, onClick }: MovieCardProps) {

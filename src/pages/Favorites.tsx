@@ -2,13 +2,34 @@
 import { Link } from "react-router-dom";
 import { Movie } from "../types/movie";
 import MovieCard from "../components/MovieCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Favorites() {
-  const [favorites, setFavorites] = useState<Movie[]>(() => {
+  const [favorites, setFavorites] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
     const saved = localStorage.getItem("favorites");
-    return saved ? JSON.parse(saved) : [];
-  });
+    if (saved) {
+      try {
+        const parsedFavorites = JSON.parse(saved);
+        setFavorites(parsedFavorites);
+      } catch (error) {
+        console.error("Failed to parse favorites from localStorage", error);
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  const removeFavorite = (imdbID: string) => {
+    const updatedFavorites = favorites.filter(movie => movie.imdbID !== imdbID);
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
+
+  if (loading) {
+    return <p>Loading your favorites...</p>;
+  }
 
   return (
     <div>
@@ -24,6 +45,7 @@ export default function Favorites() {
               key={movie.imdbID} 
               movie={movie}
               onClick={() => {/* Navigate to details */}}
+              onRemove={() => removeFavorite(movie.imdbID)} // Pass remove function to MovieCard
             />
           ))}
         </div>

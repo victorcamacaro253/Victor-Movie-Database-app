@@ -24,7 +24,7 @@ export default function MovieDetailsPage() {
         setLoading(true);
         const apiLanguage = getApiLanguageCode(lang);
         console.log('language',apiLanguage)
-        const data = await fetchMovieDetails(id!,apiLanguage);
+        const data = await fetchMovieDetails(Number(id), apiLanguage);
         console.log(data)
         if (data) setMovie(data);
         else setError("Movie not found");
@@ -34,7 +34,7 @@ export default function MovieDetailsPage() {
         setLoading(false);
       }
     };
-    fetchMovie();
+    fetchMovie(navigator.language || 'en');
   }, [id]);
 
   if (loading) return <LoadingSpinner fullPage />;
@@ -55,7 +55,7 @@ export default function MovieDetailsPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10" />
             <img
               src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-              alt={movie.title}
+              alt={movie.Title}
               className="w-full h-64 md:h-96 object-cover"
             />
           </>
@@ -67,7 +67,7 @@ export default function MovieDetailsPage() {
             className="flex items-center gap-2 text-white hover:text-blue-300 transition-colors mb-6"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinecap="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <path strokeLinecap="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back
           </button>
@@ -80,16 +80,16 @@ export default function MovieDetailsPage() {
                   src={movie.poster_path 
                     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
                     : "https://via.placeholder.com/500x750?text=No+Poster"}
-                  alt={movie.title}
+                  alt={movie.Title}
                   className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
                   }}
                 />
-                {movie.videos?.results?.length > 0 && (
+                {(movie.videos?.results ?? []).length > 0 && (
                   <button 
                     className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl"
-                    onClick={() => window.open(`https://www.youtube.com/watch?v=${movie.videos.results[0].key}`, '_blank')}
+                    onClick={() => window.open(`https://www.youtube.com/watch?v=${movie.videos?.results[0]?.key}`, '_blank')}
                   >
                     <div className="bg-red-600 p-4 rounded-full">
                       <PlayIcon className="w-8 h-8 text-white" />
@@ -102,7 +102,7 @@ export default function MovieDetailsPage() {
             {/* Movie Info */}
             <div className="flex-1 text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">
-                {movie.title} 
+                {movie.Title} 
                 <span className="text-gray-300 ml-2">
                   ({movie.release_date.split('-')[0]})
                 </span>
@@ -210,13 +210,13 @@ export default function MovieDetailsPage() {
         </div>
 
         {/* Videos */}
-        {movie.videos?.results?.length > 0 && (
+        {(movie.videos?.results ?? []).length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Videos
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {movie.videos.results.slice(0, 2).map(video => (
+              {(movie.videos?.results ?? []).slice(0, 2).map(video => (
                 <div key={video.id} className="relative aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
                   <img
                     src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`}
@@ -241,13 +241,13 @@ export default function MovieDetailsPage() {
         )}
 
         {/* Similar Movies */}
-        {movie.similar?.results?.length > 0 && (
+        {(movie.similar?.results?.length ?? 0) > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Similar Movies
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {movie.similar.results.slice(0, 5).map(movie => (
+              {(movie.similar?.results ?? []).slice(0, 5).map(movie => (
                 <Link 
                   to={`/movie/${movie.id}`}
                   key={movie.id}

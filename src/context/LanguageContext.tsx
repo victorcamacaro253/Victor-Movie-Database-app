@@ -7,7 +7,7 @@ type Language = 'en' | 'es';
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: keyof typeof translations['en'], params?: Record<string, string>) => string;
   detectedCountry?: string;
   isDetectingLocation: boolean;
 }
@@ -111,7 +111,7 @@ export const LanguageProvider: React.FC<{children: React.ReactNode}> = ({ childr
     }
   };
 
-  const t = (key: string, params?: Record<string, string>) => {
+  const t = (key: keyof typeof translations['en'], params?: Record<string, string>) => {
     let translation = translations[language][key] || key;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
