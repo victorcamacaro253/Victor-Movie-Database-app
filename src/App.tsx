@@ -9,6 +9,7 @@ import ActorDetailsPage from './pages/ActorDetails';
 import TVShowDetailsPage from './pages/TVShowDetails';
 import Footer from './components/Footer';
 import MoviePage from './pages/MoviePage';
+import TVPage from './pages/TVShowPage';
 import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/movie/:id" element={<MovieDetailsPage />} />
             <Route path="/actor/:id" element={<ActorDetailsPage />} /> {/* Add the route for ActorDetailsPage */}
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/tv" element={<TVPage />} />
             <Route path="/tv/:id" element={<TVShowDetailsPage />} /> {/* Add the route for TVShowDetailsPage */}
             <Route path="/movies" element={<MoviePage />} />
           </Routes>

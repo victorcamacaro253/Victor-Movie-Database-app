@@ -31,6 +31,13 @@ const translations = {
     'tv.shows': 'TV Shows',
     'home': 'Home',
     'language.detected': 'We\'ve set your language to {language} based on your location ({country}). You can change this anytime.',
+    'tv_shows.title': 'TV Shows',
+    'tv_shows.subtitle': 'Browse popular TV shows from around the world',
+    'tv_shows.no_results': 'No TV shows found matching your criteria',
+    'filters.category': 'Category',
+    'filters.year': 'Year',
+    'filters.sort_by': 'Sort By',
+    'error.fetch_tv_shows': 'Failed to fetch TV shows',
   },
   es: {
     'discover.title': 'Descubre Películas y Series',
@@ -48,6 +55,13 @@ const translations = {
     'tv.shows': 'Series',
     'home': 'Inicio',
     'language.detected': 'Hemos establecido tu idioma en {language} según tu ubicación ({country}). Puedes cambiarlo cuando quieras.',
+    'tv_shows.title': 'Series de TV',
+    'tv_shows.subtitle': 'Explora series populares de todo el mundo',
+    'tv_shows.no_results': 'No se encontraron series que coincidan',
+    'filters.category': 'Categoría',
+    'filters.year': 'Año',
+    'filters.sort_by': 'Ordenar por',
+    'error.fetch_tv_shows': 'Error al cargar las series',
   }
 };
 

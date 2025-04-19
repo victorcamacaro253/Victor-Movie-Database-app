@@ -20,6 +20,13 @@ interface TmdbMovie {
   // Add other fields you might need
 }
 
+export interface TVShowResponse {
+  page: number;
+  results: TVShow[];
+  total_pages: number;
+  total_results: number;
+}
+
 export interface TmdbResponse {
   page: number;
   results: TmdbMovie[];
@@ -263,13 +270,14 @@ export const fetchActorDetails = async (actorId: string): Promise<ActorDetails> 
   };
 
   // src/api/tmdb.ts
-export const fetchPopularTVShows = async (page = 1): Promise<TVShow[]> => {
+  /*
+export const fetchPopularTVShows = async (page = 1, apiLanguage: string): Promise<TVShow[]> => {
     const response = await fetch(
       `${BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&page=${page}`
     );
     const data = await response.json();
     return data.results.map(mapTmdbToTVShow);
-  };
+  }; */
   
   export const fetchTVShowDetails = async (id: number): Promise<TVShowDetails> => {
     const response = await fetch(
@@ -304,6 +312,40 @@ export const fetchEpisodeDetails = async (
     return await response.json();
   };
 
+  
+export const fetchPopularTVShows = async (page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch popular TV shows');
+  return await response.json();
+}; 
+
+export const fetchTopRatedTVShows = async (page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/tv/top_rated?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch top rated TV shows');
+  return await response.json();
+};
+
+export const fetchTVShowsAiringToday = async (page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/tv/airing_today?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch TV shows airing today');
+  return await response.json();
+};
+
+export const fetchTVShowsOnTheAir = async (page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/tv/on_the_air?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch TV shows on the air');
+  return await response.json();
+};
+
+
 // Helper function to convert TMDb movie to your existing Movie type
 export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
   id: tmdbMovie.id,
@@ -319,6 +361,7 @@ export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
   release_date: tmdbMovie.release_date,
 });
 
+/*
 const mapTmdbToTVShow = (tvShow: any): TVShow => ({
     id: tvShow.id,
     name: tvShow.name,
@@ -334,6 +377,7 @@ const mapTmdbToTVShow = (tvShow: any): TVShow => ({
     original_language: tvShow.original_language,
     original_name: tvShow.original_name,
   });
+  */
 
 // src/api/tmdb.ts
 export const getMovieFinancials = async (movieId: number): Promise<MovieFinancials> => {
