@@ -2,20 +2,20 @@ import { Link, NavLinkProps, useLocation } from 'react-router-dom';
 import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon, MenuIcon,XCloseIcon } from '../components/Icons';
 import { getFlagEmoji } from '../utils/languageUtils';
 import { JSX, useState } from 'react'; // Add this import
+import  {useTheme} from '../context/ThemeContext';
 
 type Language = 'en' | 'es';
 import LoadingSpinner from './LoadingSpinner';
 import { useLanguage } from '../context/LanguageContext';
 
-interface NavbarProps {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
 
-export default function Navbar({ theme, toggleTheme }: NavbarProps) {
+
+export default function Navbar() {
   const { language, setLanguage, isDetectingLocation } = useLanguage();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
+  const { theme, toggleTheme } = useTheme();
+  
   
   const isActive = (path: string) => location.pathname === path;
 

@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { searchMulti } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
 import { SearchResult } from '../types/movie';
+import { useTheme } from '../context/ThemeContext';
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -30,6 +31,7 @@ export default function HomePage() {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+  const { theme } = useTheme();
 
   const handleSearch = async () => {
     if (!query.trim()) {
@@ -74,7 +76,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
