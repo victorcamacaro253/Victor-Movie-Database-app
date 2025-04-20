@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon } from '../components/Icons';
+import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon, MenuIcon,XCloseIcon } from '../components/Icons';
 import { getFlagEmoji } from '../utils/languageUtils';
+import { useState } from 'react'; // Add this import
 
-// Define or import the Language type
-type Language = 'en' | 'es'; // Add more language codes as needed
+type Language = 'en' | 'es';
 import LoadingSpinner from './LoadingSpinner';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -15,8 +15,8 @@ interface NavbarProps {
 export default function Navbar({ theme, toggleTheme }: NavbarProps) {
   const { language, setLanguage, isDetectingLocation } = useLanguage();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
   
-  // Check if current route is active
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -24,19 +24,34 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <Link 
-            to="/" 
-            className="flex items-center space-x-2 group"
-          >
-            <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500'} group-hover:bg-blue-400 transition-colors`}>
-              <FilmIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              CineVerse
-            </span>
-          </Link>
+          <div className="flex items-center">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-md mr-2"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <XCloseIcon className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} />
+              ) : (
+                <MenuIcon className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} />
+              )}
+            </button>
+            
+            <Link 
+              to="/" 
+              className="flex items-center space-x-2 group"
+            >
+              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500'} group-hover:bg-blue-400 transition-colors`}>
+                <FilmIcon className="w-5 h-5 text-white" />
+              </div>
+              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                CineVerse
+              </span>
+            </Link>
+          </div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-1">
             <NavLink 
               to="/" 
@@ -70,8 +85,8 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-3">
-             {/* Language Switcher */}
-             <div className="relative">
+            {/* Language Switcher - Hidden on mobile to save space */}
+            <div className="hidden sm:block relative">
               {isDetectingLocation ? (
                 <div className="px-3 py-1">
                   <LoadingSpinner size="sm" />
@@ -110,7 +125,7 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
               )}
             </button>
             
-            {/* User Avatar - Replace with your auth component */}
+            {/* User Avatar */}
             <div className={`p-1 rounded-full ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}>
               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
                 U
@@ -118,20 +133,72 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu - Shows on small screens */}
+        {mobileMenuOpen && (
+          <div className="md:hidden pb-3">
+            <div className="flex flex-col space-y-1 mt-2">
+              <MobileNavLink 
+                to="/" 
+                active={isActive('/')}
+                theme={theme}
+                icon={<HomeIcon className="w-5 h-5" />}
+                label="Home"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              <MobileNavLink 
+                to="/movies" 
+                active={isActive('/movies')}
+                theme={theme}
+                icon={<FilmIcon className="w-5 h-5" />}
+                label="Movies"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              <MobileNavLink 
+                to="/tv" 
+                active={isActive('/tv')}
+                theme={theme}
+                icon={<TvIcon className="w-5 h-5" />}
+                label="TV Shows"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              <MobileNavLink 
+                to="/favorites" 
+                active={isActive('/favorites')}
+                theme={theme}
+                icon={<BookmarkIcon className="w-5 h-5" />}
+                label="Favorites"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+            </div>
+            
+            {/* Mobile Language Selector */}
+            <div className="mt-3">
+              {isDetectingLocation ? (
+                <div className="px-3 py-2">
+                  <LoadingSpinner size="sm" />
+                </div>
+              ) : (
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as Language)}
+                  className={`w-full appearance-none bg-transparent border ${
+                    theme === 'dark' ? 'border-gray-600 text-white' : 'border-gray-300 text-gray-800'
+                  } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                >
+                  <option value="en">{getFlagEmoji('en')} English</option>
+                  <option value="es">{getFlagEmoji('es')} Español</option>
+                </select>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
 }
 
-// Reusable NavLink Component
-interface NavLinkProps {
-  to: string;
-  active: boolean;
-  theme: 'light' | 'dark';
-  icon: React.ReactNode;
-  label: string;
-}
-
+// Reusable NavLink Component (Desktop)
 function NavLink({ to, active, theme, icon, label }: NavLinkProps) {
   return (
     <Link
@@ -147,6 +214,32 @@ function NavLink({ to, active, theme, icon, label }: NavLinkProps) {
       }`}
     >
       <span className="mr-2">{icon}</span>
+      {label}
+    </Link>
+  );
+}
+
+// Mobile NavLink Component
+interface MobileNavLinkProps extends NavLinkProps {
+  onClick: () => void;
+}
+
+function MobileNavLink({ to, active, theme, icon, label, onClick }: MobileNavLinkProps) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors ${
+        active
+          ? theme === 'dark'
+            ? 'bg-blue-600 text-white'
+            : 'bg-blue-100 text-blue-700'
+          : theme === 'dark'
+          ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
+          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+      }`}
+    >
+      <span className="mr-3">{icon}</span>
       {label}
     </Link>
   );
