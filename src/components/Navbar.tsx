@@ -1,7 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLinkProps, useLocation } from 'react-router-dom';
 import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon, MenuIcon,XCloseIcon } from '../components/Icons';
 import { getFlagEmoji } from '../utils/languageUtils';
-import { useState } from 'react'; // Add this import
+import { JSX, useState } from 'react'; // Add this import
 
 type Language = 'en' | 'es';
 import LoadingSpinner from './LoadingSpinner';
@@ -199,7 +199,15 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 }
 
 // Reusable NavLink Component (Desktop)
-function NavLink({ to, active, theme, icon, label }: NavLinkProps) {
+interface CustomNavLinkProps {
+  to: string;
+  active: boolean;
+  theme: 'light' | 'dark';
+  icon: JSX.Element;
+  label: string;
+}
+
+function NavLink({ to, active, theme, icon, label }: CustomNavLinkProps) {
   return (
     <Link
       to={to}
@@ -221,7 +229,12 @@ function NavLink({ to, active, theme, icon, label }: NavLinkProps) {
 
 // Mobile NavLink Component
 interface MobileNavLinkProps extends NavLinkProps {
+  to: string;
   onClick: () => void;
+  active: boolean; // Add the active property\
+  theme: 'light' | 'dark'; // Add the theme property
+  icon : JSX.Element; // Add the icon property
+  label: string; // Add the label 
 }
 
 function MobileNavLink({ to, active, theme, icon, label, onClick }: MobileNavLinkProps) {
