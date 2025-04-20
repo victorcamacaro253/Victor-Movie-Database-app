@@ -1,5 +1,4 @@
-// src/context/ThemeContext.tsx
-import { createContext, useContext, ReactNode, useState } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -10,11 +9,36 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Helper function to get initial theme
+const getInitialTheme = (): Theme => {
+  if (typeof window !== 'undefined') {
+    // 1. Check localStorage
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    if (savedTheme) return savedTheme;
+    
+    // 2. Check system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) return 'dark';
+  }
+  
+  // 3. Default to light
+  return 'light';
+};
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
+  // Apply theme to document and save to localStorage
+  useEffect(() => {
+    // 1. Apply to HTML element
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    
+    // 2. Save to localStorage
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   return (
