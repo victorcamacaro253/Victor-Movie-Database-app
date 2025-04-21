@@ -7,6 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import {ErrorMessage} from '../components/ErrorMessage';
 import DropdownFilter from '../components/DropdownFilter';
 import Pagination from '../components/Pagination';
+import { useTheme } from '../context/ThemeContext';
 import { 
   fetchPopularMovies,
   fetchUpcomingMovies,
@@ -40,6 +41,7 @@ const sortOptions = [
 ];
 
 export default function MoviesPage() {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [category, setCategory] = useState('popular');
   const [year, setYear] = useState('');
@@ -104,8 +106,19 @@ export default function MoviesPage() {
     );
   }
 
+
+  const themeClasses = {
+    bg: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    cardBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+    secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
+    emptyStateBg: theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100',
+    emptyStateText: theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+  };
+
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={`min-h-screen ${themeClasses.bg}`}>
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
@@ -117,7 +130,7 @@ export default function MoviesPage() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className={`flex flex-col md:flex-row gap-4 mb-8 ${themeClasses.cardBg} p-4 rounded-lg shadow`}>
           <DropdownFilter
             label="Category"
             options={movieCategories}
@@ -126,6 +139,7 @@ export default function MoviesPage() {
               setCategory(e.target.value);
               setPage(1);
             }}
+            
           />
           <DropdownFilter
             label="Year"
@@ -178,6 +192,7 @@ export default function MoviesPage() {
                     vote_average: movie.vote_average,
                     overview: movie.overview
                   }}
+                  showRating={true}
                   onClick={() => handleMovieClick(movie.id)}
                 />
               ))}

@@ -163,6 +163,7 @@ export default function HomePage() {
                     <MovieCard
                       key={movie.imdbID}
                       movie={movie}
+                      
                       onClick={() => navigate(`/movie/${movie.imdbID}`)}
                     />
                   ))}

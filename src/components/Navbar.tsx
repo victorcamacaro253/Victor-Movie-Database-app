@@ -99,8 +99,8 @@ export default function Navbar() {
                     theme === 'dark' ? 'border-gray-600 text-white' : 'border-gray-300 text-gray-800'
                   } rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 >
-                  <option value="en">{getFlagEmoji('en')} English</option>
-                  <option value="es">{getFlagEmoji('es')} Español</option>
+                  <option value="en" className={`${theme === 'dark' ? 'text-black': 'text-black'}`}>{getFlagEmoji('en')} English</option>
+                  <option value="es" className={`${theme === 'dark' ? 'text-black': 'text-black'}`}>{getFlagEmoji('es')} Español</option>
                 </select>
               )}
             </div>
