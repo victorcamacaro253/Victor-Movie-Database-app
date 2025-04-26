@@ -1,16 +1,18 @@
 // src/components/MovieCard.tsx
 import { Movie } from "../types/movie";
 import { useTheme } from "../context/ThemeContext";
-import { StarIcon } from "./Icons"; // Assuming you have a StarIcon component
+import { StarIcon, TrendingUpIcon } from "./Icons"; // Assuming you have a TrendingUpIcon component
 
 interface MovieCardProps {
   movie: Movie;
   onClick: () => void;
   onRemove?: () => void;
   showRating?: boolean; // Optional rating display
+  showPopularity?: boolean; // Optional popularity display
+  rank?: number;
 }
 
-export default function MovieCard({ movie, onClick, onRemove, showRating = false }: MovieCardProps) {
+export default function MovieCard({ movie, onClick, onRemove, showRating = false,  showPopularity = false,rank }: MovieCardProps) {
   const { theme } = useTheme();
 
   // Theme-based classes
@@ -19,7 +21,8 @@ export default function MovieCard({ movie, onClick, onRemove, showRating = false
     text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
     secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
     hover: theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-50',
-    shadow: theme === 'dark' ? 'shadow-gray-900' : 'shadow-gray-200'
+    shadow: theme === 'dark' ? 'shadow-gray-900' : 'shadow-gray-200',
+     rankBg: theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
   };
 
   return (
@@ -27,6 +30,21 @@ export default function MovieCard({ movie, onClick, onRemove, showRating = false
       onClick={onClick}
       className={`relative ${cardClasses.bg} ${cardClasses.text} p-4 rounded-lg shadow-md ${cardClasses.hover} hover:shadow-lg transition-all duration-300 cursor-pointer group`}
     >
+
+{rank !== undefined && (
+        <div className={`absolute -top-2 -left-2 z-10 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs ${
+          rank <= 3 
+            ? rank === 1 
+              ? 'bg-yellow-500 text-white' 
+              : rank === 2 
+                ? 'bg-gray-400 text-white' 
+                : 'bg-amber-600 text-white'
+            : cardClasses.rankBg
+        }`}>
+          {rank}
+        </div>
+      )}
+
       {/* Remove button (if onRemove provided) */}
       {onRemove && (
         <button
@@ -70,6 +88,14 @@ export default function MovieCard({ movie, onClick, onRemove, showRating = false
         <h3 className={`font-bold line-clamp-2 ${cardClasses.text}`}>{movie.Title}</h3>
         <div className="flex justify-between items-center">
           <p className={`text-sm ${cardClasses.secondaryText}`}>{movie.Year}</p>
+          <div className="flex gap-2">
+            {showPopularity && movie.popularity && (
+              <div className="flex items-center gap-1 text-xs">
+                <TrendingUpIcon className="w-3 h-3" />
+                <span>{Math.round(movie.popularity)}</span>
+              </div>
+            )}
+          </div>
          
         </div>
       </div>

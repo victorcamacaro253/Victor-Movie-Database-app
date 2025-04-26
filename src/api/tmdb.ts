@@ -17,6 +17,8 @@ interface TmdbMovie {
   release_date: string;
   vote_average: number;
   overview: string;
+  popularity: boolean;
+  rating?: number; 
   // Add other fields you might need
 }
 
@@ -357,7 +359,7 @@ export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
     ? `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}`
     : 'https://via.placeholder.com/300x450?text=No+Poster',
  
-  vote_average: 0,
+  vote_average: tmdbMovie.vote_average,
   release_date: tmdbMovie.release_date,
 });
 
@@ -396,4 +398,33 @@ export const getMovieFinancials = async (movieId: number): Promise<MovieFinancia
       releaseDate: data.release_date,
       // Other financial data you might want
     };
+  };
+
+
+
+  export const fetchTopMovies = async (sortBy: string = 'popularity.desc', page: number = 1, language: string = 'en-US'): Promise<TmdbResponse> => {
+    const response = await fetch(
+      `${BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&vote_count.gte=100&language=${language}&page=${page}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch top movies');
+    }
+
+    const data = await response.json();
+    return data;
+  }
+
+
+  export const fetchTrendingMovies = async (timeWindow: 'day' | 'week' = 'week', page: number = 1, language: string = 'en-US'): Promise<TmdbResponse> => {
+    const response = await fetch(
+      `${BASE_URL}/trending/movie/${timeWindow}?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch trending movies');
+    }
+
+    const data = await response.json();
+    return data;
   };

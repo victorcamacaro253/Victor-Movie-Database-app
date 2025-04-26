@@ -18,6 +18,7 @@ export default function HomePage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { 
+    trendingMovies,
     popularMovies, 
     upcomingMovies, 
     nowPlayingMovies,
@@ -130,15 +131,18 @@ export default function HomePage() {
               <SectionHeader 
                 title="Popular Movies"
                 count={popularMovies.length}
-                viewAllLink="/popular"
+                viewAllLink="/top-movies"
               />
               
-              {popularMovies.length > 0 ? (
+              {trendingMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {popularMovies.slice(0, 10).map((movie) => (
+                  {trendingMovies.slice(0, 10).map((movie) => (
+                    console.log('Rendering movie:', movie),
                     <MovieCard 
                       key={movie.imdbID} 
                       movie={movie}
+                      showRating={true}
+                      showPopularity={true}
                       onClick={() => navigate(`/movie/${movie.imdbID}`)}
                     />
                   ))}

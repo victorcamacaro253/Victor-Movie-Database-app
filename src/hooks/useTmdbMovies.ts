@@ -1,12 +1,13 @@
 // src/hooks/useTmdbMovies.ts
 import { useState, useEffect,useCallback } from 'react';
-import { fetchPopularMovies,fetchNowPlayingMovies,fetchUpcomingMovies,fetchMovieDetails, mapTmdbToMovie } from '../api/tmdb';
+import { fetchTrendingMovies,fetchPopularMovies,fetchNowPlayingMovies,fetchUpcomingMovies,fetchMovieDetails, mapTmdbToMovie } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
 import { getApiLanguageCode } from '../utils/languageUtils';
 import { Movie } from '../types/movie';
 
 export const useTmdbMovies = () => {
   const { language } = useLanguage();
+  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
@@ -23,13 +24,16 @@ export const useTmdbMovies = () => {
         const apiLanguage = getApiLanguageCode(lang);
         
         // Fetch both popular and upcoming movies in parallel
-        const [popularResponse, upcomingResponse, nowPlayingResponse] = await Promise.all([
+        const [trendingResponse, popularResponse, upcomingResponse, nowPlayingResponse] = await Promise.all([
+
+          fetchTrendingMovies('week',1, apiLanguage),
           fetchPopularMovies(1, apiLanguage),
           fetchUpcomingMovies(1,apiLanguage),
           fetchNowPlayingMovies(1,apiLanguage),
         
         ]);
-
+        
+        setTrendingMovies(trendingResponse.results.map(mapTmdbToMovie));
         setPopularMovies(popularResponse.results.map(mapTmdbToMovie));
         setUpcomingMovies(upcomingResponse.results.map(mapTmdbToMovie));
         setNowPlayingMovies(nowPlayingResponse.results.map(mapTmdbToMovie));
@@ -59,5 +63,5 @@ export const useTmdbMovies = () => {
     }
   }, []);
 
-  return { popularMovies, upcomingMovies, nowPlayingMovies,fetchMovieDetailsById,movieDetails,loading, error };
+  return { trendingMovies,popularMovies, upcomingMovies, nowPlayingMovies,fetchMovieDetailsById,movieDetails,loading, error };
 };

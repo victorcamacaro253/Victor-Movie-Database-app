@@ -209,3 +209,24 @@ export function XCloseIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+
+// Add the TrendingUpIcon component if it doesn't exist
+export function TrendingUpIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M3 17l6-6 4 4 8-8M14 7h7v7"
+      />
+    </svg>
+  );
+}

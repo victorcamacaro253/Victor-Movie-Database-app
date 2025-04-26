@@ -8,6 +8,7 @@ import TVShowDetailsPage from './pages/TVShowDetails';
 import Footer from './components/Footer';
 import MoviePage from './pages/MoviePage';
 import TVPage from './pages/TVShowPage';
+import TopMoviesPage from './pages/TopMoviesPage';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
@@ -37,6 +38,8 @@ function App() {
                 <Route path="/tv" element={<TVPage />} />
                 <Route path="/tv/:id" element={<TVShowDetailsPage />} />
                 <Route path="/movies" element={<MoviePage />} />
+                <Route path="/top-movies" element={<TopMoviesPage />} />
+                {/* Add more routes as needed */}
               </Routes>
             </main>
             <Footer />

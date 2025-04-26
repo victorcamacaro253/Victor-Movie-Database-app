@@ -1,5 +1,6 @@
 // src/types.ts
 export interface Movie {
+    popularity: boolean;
     Title: string; // Changed from Title to title
     Year: string; // Changed from Year to year
     id: number; // Changed from imdbID to id (TMDB uses id)
@@ -11,6 +12,7 @@ export interface Movie {
     vote_average: number; // Changed from imdbRating to vote_average
     results ?: Movie[]; // Added based on the API response
     release_date ?: string; // Added based on the API response
+    revenue?: number; // Added revenue property
    
 }
 
