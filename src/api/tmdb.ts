@@ -358,7 +358,7 @@ export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
   Poster: tmdbMovie.poster_path
     ? `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}`
     : 'https://via.placeholder.com/300x450?text=No+Poster',
- 
+ rating : tmdbMovie.rating || 0,
   vote_average: tmdbMovie.vote_average,
   release_date: tmdbMovie.release_date,
 });

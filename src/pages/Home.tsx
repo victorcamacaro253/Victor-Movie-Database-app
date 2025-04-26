@@ -136,15 +136,27 @@ export default function HomePage() {
               
               {trendingMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {trendingMovies.slice(0, 10).map((movie) => (
-                    console.log('Rendering movie:', movie),
-                    <MovieCard 
+                  {trendingMovies.slice(0, 10).map((movie,index) => (
+                    <div key={movie.id} className="relative">
+                       <span className={`absolute -top-2 -left-2 z-10 rounded-full ${
+                index < 3 
+                  ? 'bg-yellow-500 text-white' 
+                  : theme === 'dark' 
+                    ? 'bg-gray-700 text-gray-300' 
+                    : 'bg-gray-200 text-gray-800'
+                } w-8 h-8 flex items-center justify-center font-bold`}>
+                {index + 1}
+              </span>
+                     <MovieCard 
                       key={movie.imdbID} 
                       movie={movie}
                       showRating={true}
                       showPopularity={true}
                       onClick={() => navigate(`/movie/${movie.imdbID}`)}
                     />
+                    </div>
+                    
+                   
                   ))}
                 </div>
               ) : (
