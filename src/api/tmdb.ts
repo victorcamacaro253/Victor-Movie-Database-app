@@ -17,7 +17,7 @@ interface TmdbMovie {
   release_date: string;
   vote_average: number;
   overview: string;
-  popularity: boolean;
+  popularity: number;
   rating?: number; 
   // Add other fields you might need
 }
@@ -361,6 +361,7 @@ export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
  rating : tmdbMovie.rating || 0,
   vote_average: tmdbMovie.vote_average,
   release_date: tmdbMovie.release_date,
+  popularity: tmdbMovie.popularity,
 });
 
 /*

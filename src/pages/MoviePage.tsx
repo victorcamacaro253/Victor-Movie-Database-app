@@ -190,7 +190,8 @@ export default function MoviesPage() {
                       ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                       : 'https://via.placeholder.com/300x450?text=No+Poster',
                     vote_average: movie.vote_average,
-                    overview: movie.overview
+                    overview: movie.overview,
+                    popularity: movie.popularity || 0 // Ensure popularity is included
                   }}
                   showRating={true}
                   onClick={() => handleMovieClick(movie.id)}

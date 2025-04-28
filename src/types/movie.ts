@@ -1,6 +1,6 @@
 // src/types.ts
 export interface Movie {
-    popularity: boolean;
+    popularity: number;
     Title: string; // Changed from Title to title
     Year: string; // Changed from Year to year
     id: number; // Changed from imdbID to id (TMDB uses id)

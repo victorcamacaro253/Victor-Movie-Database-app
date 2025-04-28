@@ -92,7 +92,7 @@ export default function MovieCard({ movie, onClick, onRemove, showRating = false
             {showPopularity && movie.popularity && (
               <div className="flex items-center gap-1 text-xs">
                 <TrendingUpIcon className="w-3 h-3" />
-                <span>{Math.round(movie.popularity)}</span>
+                <span>{typeof movie.popularity === "number" ? Math.round(movie.popularity) : "N/A"}</span>
               </div>
             )}
           </div>
