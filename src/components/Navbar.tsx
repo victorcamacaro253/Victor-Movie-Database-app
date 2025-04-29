@@ -11,7 +11,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 
 export default function Navbar() {
-  const { language, setLanguage, isDetectingLocation } = useLanguage();
+  const { language, setLanguage, isDetectingLocation,t } = useLanguage();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
   const { theme, toggleTheme } = useTheme();
@@ -58,28 +58,28 @@ export default function Navbar() {
               active={isActive('/')}
               theme={theme}
               icon={<HomeIcon className="w-5 h-5" />}
-              label="Home"
+              label={t('home')}
             />
             <NavLink 
               to="/movies" 
               active={isActive('/movies')}
               theme={theme}
               icon={<FilmIcon className="w-5 h-5" />}
-              label="Movies"
+              label={t('movies')}
             />
             <NavLink 
               to="/tv" 
               active={isActive('/tv')}
               theme={theme}
               icon={<TvIcon className="w-5 h-5" />}
-              label="TV Shows"
+              label={t('tv.shows')}
             />
             <NavLink 
               to="/favorites" 
               active={isActive('/favorites')}
               theme={theme}
               icon={<BookmarkIcon className="w-5 h-5" />}
-              label="Favorites"
+              label={t('favorites')}
             />
           </div>
 
@@ -143,7 +143,7 @@ export default function Navbar() {
                 active={isActive('/')}
                 theme={theme}
                 icon={<HomeIcon className="w-5 h-5" />}
-                label="Home"
+                label={t('home')}
                 onClick={() => setMobileMenuOpen(false)}
               />
               <MobileNavLink 
@@ -151,7 +151,7 @@ export default function Navbar() {
                 active={isActive('/movies')}
                 theme={theme}
                 icon={<FilmIcon className="w-5 h-5" />}
-                label="Movies"
+                label={t('movies')}
                 onClick={() => setMobileMenuOpen(false)}
               />
               <MobileNavLink 
@@ -159,7 +159,7 @@ export default function Navbar() {
                 active={isActive('/tv')}
                 theme={theme}
                 icon={<TvIcon className="w-5 h-5" />}
-                label="TV Shows"
+                label={t('tv.shows')}
                 onClick={() => setMobileMenuOpen(false)}
               />
               <MobileNavLink 
@@ -167,7 +167,7 @@ export default function Navbar() {
                 active={isActive('/favorites')}
                 theme={theme}
                 icon={<BookmarkIcon className="w-5 h-5" />}
-                label="Favorites"
+                label={t('favorites')}
                 onClick={() => setMobileMenuOpen(false)}
               />
             </div>

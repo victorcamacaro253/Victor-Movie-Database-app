@@ -1,6 +1,8 @@
 // src/components/SectionHeader.tsx
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+
 
 interface SectionHeaderProps {
   title: string;
@@ -9,6 +11,7 @@ interface SectionHeaderProps {
 }
 
 export default function SectionHeader({ title, count, viewAllLink }: SectionHeaderProps) {
+    const { t } = useLanguage();
   const { theme } = useTheme();
   return (
     <div className="flex justify-between items-center mb-6">
@@ -25,7 +28,7 @@ export default function SectionHeader({ title, count, viewAllLink }: SectionHead
           to={viewAllLink}
           className={`text-sm ${theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}
         >
-          View All
+        {t('view.all')}
         </Link>
       )}
     </div>

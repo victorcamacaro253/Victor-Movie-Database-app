@@ -8,6 +8,7 @@ import {ErrorMessage} from '../components/ErrorMessage';
 import DropdownFilter from '../components/DropdownFilter';
 import Pagination from '../components/Pagination';
 import { useTheme } from '../context/ThemeContext';
+//import { useLanguage } from '../context/LanguageContext';
 import { 
   fetchPopularMovies,
   fetchUpcomingMovies,
@@ -41,6 +42,7 @@ const sortOptions = [
 ];
 
 export default function MoviesPage() {
+//  const { t } = useLanguage();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [category, setCategory] = useState('popular');

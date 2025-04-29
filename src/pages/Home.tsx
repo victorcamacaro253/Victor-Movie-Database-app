@@ -104,7 +104,7 @@ export default function HomePage() {
         {isSearching ? (
           <>
             <SectionHeader 
-              title={`Search Results for "${query}"`}
+              title={`${t('search.results')} "${query}"`}
               count={searchResults.length}
             />
             
@@ -129,7 +129,7 @@ export default function HomePage() {
             {/* Popular Movies Section */}
             <section className="mb-12">
               <SectionHeader 
-                title="Popular Movies"
+                title={t('popular.movies')}
                 count={popularMovies.length}
                 viewAllLink="/top-movies"
               />
@@ -194,7 +194,7 @@ export default function HomePage() {
             {/* Upcoming Movies Section */}
             <section className="mb-12">
               <SectionHeader 
-                title="Upcoming Movies"
+                title={t('upcoming.movies')}
                 count={upcomingMovies.length}
                 viewAllLink="/upcoming"
               />
