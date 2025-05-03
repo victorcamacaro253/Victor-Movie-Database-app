@@ -8,6 +8,7 @@ interface SectionHeaderProps {
   title: string;
   count?: number;
   viewAllLink?: string;
+  theme?: string;
 }
 
 export default function SectionHeader({ title, count, viewAllLink }: SectionHeaderProps) {

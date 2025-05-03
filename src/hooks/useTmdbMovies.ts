@@ -22,6 +22,7 @@ export const useTmdbMovies = () => {
       try {
         setLoading(true);
         const apiLanguage = getApiLanguageCode(lang);
+        console.log(apiLanguage)
         
         // Fetch both popular and upcoming movies in parallel
         const [trendingResponse, popularResponse, upcomingResponse, nowPlayingResponse] = await Promise.all([

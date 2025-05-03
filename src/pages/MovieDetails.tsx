@@ -1,14 +1,13 @@
-// src/pages/MovieDetails.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { MovieDetails } from "../types/movie";
 import { fetchMovieDetails } from '../api/tmdb';
 import ActorCard from '../components/ActorCard';
 import LoadingSpinner from '../components/LoadingSpinner';
-import {ErrorMessage} from '../components/ErrorMessage';
+import { ErrorMessage } from '../components/ErrorMessage';
 import { StarIcon, ClockIcon, CalendarIcon, DollarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
 import { getApiLanguageCode } from '../utils/languageUtils';
-
+import { useLanguage } from '../context/LanguageContext';
 
 export default function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,16 +15,14 @@ export default function MovieDetailsPage() {
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { language } = useLanguage();
 
   useEffect(() => {
-    const fetchMovie = async (lang : string) => {
-
+    const fetchMovie = async () => {
       try {
         setLoading(true);
-        const apiLanguage = getApiLanguageCode(lang);
-        console.log('language',apiLanguage)
+        const apiLanguage = getApiLanguageCode(language);
         const data = await fetchMovieDetails(Number(id), apiLanguage);
-        console.log(data)
         if (data) setMovie(data);
         else setError("Movie not found");
       } catch (err) {
@@ -34,8 +31,8 @@ export default function MovieDetailsPage() {
         setLoading(false);
       }
     };
-    fetchMovie(navigator.language || 'en');
-  }, [id]);
+    fetchMovie();
+  }, [id, language]);
 
   if (loading) return <LoadingSpinner fullPage />;
   if (error) return <ErrorMessage message={error} />;
@@ -48,135 +45,146 @@ export default function MovieDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Hero Section with Backdrop */}
+      {/* Hero Section - Redesigned */}
       <div className="relative">
-        {movie.backdrop_path && (
+        {movie.backdrop_path ? (
           <>
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent z-10" />
             <img
               src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
               alt={movie.Title}
-              className="w-full h-64 md:h-96 object-cover"
+              className="w-full aspect-[2/1] md:aspect-[3/1] object-cover"
             />
           </>
+        ) : (
+          <div className="w-full aspect-[2/1] md:aspect-[3/1] bg-gray-800" />
         )}
-        
-        <div className="container mx-auto px-4 py-16 relative z-20">
-          <button 
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-white hover:text-blue-300 transition-colors mb-6"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back
-          </button>
 
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            {/* Movie Poster */}
-            <div className="w-full md:w-1/3 lg:w-1/4">
-              <div className="relative group">
-                <img
-                  src={movie.poster_path 
-                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
-                    : "https://via.placeholder.com/500x750?text=No+Poster"}
-                  alt={movie.Title}
-                  className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
-                  }}
-                />
-                {(movie.videos?.results ?? []).length > 0 && (
-                  <button 
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl"
-                    onClick={() => window.open(`https://www.youtube.com/watch?v=${movie.videos?.results[0]?.key}`, '_blank')}
-                  >
-                    <div className="bg-red-600 p-4 rounded-full">
-                      <PlayIcon className="w-8 h-8 text-white" />
-                    </div>
-                  </button>
-                )}
+        {/* Back Button - Fixed Position */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+          aria-label="Go back"
+        >
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Main Content Container */}
+      <div className="container mx-auto px-4 py-8 md:py-12 relative z-20 -mt-16 md:-mt-24">
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          {/* Movie Poster - Now appears below on mobile */}
+          <div className="w-full md:w-1/3 lg:w-1/4 order-2 md:order-1">
+            <div className="relative group">
+              <img
+                src={movie.poster_path 
+                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+                  : "https://via.placeholder.com/500x750?text=No+Poster"}
+                alt={movie.Title}
+                className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
+                }}
+              />
+              {(movie.videos?.results ?? []).length > 0 && (
+                <button 
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl"
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${movie.videos?.results[0]?.key}`, '_blank')}
+                  aria-label="Play trailer"
+                >
+                  <div className="bg-red-600 p-4 rounded-full">
+                    <PlayIcon className="w-8 h-8 text-white" />
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Movie Info - Improved readability */}
+          <div className="order-1 md:order-2 flex-1 bg-white/90 dark:bg-gray-900/80 p-6 rounded-xl backdrop-blur-sm shadow-lg">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-gray-900 dark:text-white">
+              {movie.Title}
+              <span className="block md:inline md:ml-2 text-gray-600 dark:text-gray-300">
+                ({movie.release_date.split('-')[0]})
+              </span>
+            </h1>
+
+            {/* Genres - Better contrast */}
+            <div className="flex flex-wrap gap-2 my-4">
+              {movie.genres.map(genre => (
+                <span 
+                  key={genre.id} 
+                  className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm"
+                >
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+
+            {/* Rating and Runtime */}
+            <div className="flex items-center gap-6 mb-6">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                <StarIcon className="w-5 h-5 text-yellow-500" />
+                <span className="font-bold">{movie.vote_average.toFixed(1)}</span>
+                <span className="text-gray-500 dark:text-gray-400">/10</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                <ClockIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <span>
+                  {runtimeHours > 0 && `${runtimeHours}h `}
+                  {runtimeMinutes}m
+                </span>
               </div>
             </div>
 
-            {/* Movie Info */}
-            <div className="flex-1 text-white">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">
-                {movie.Title} 
-                <span className="text-gray-300 ml-2">
-                  ({movie.release_date.split('-')[0]})
-                </span>
-              </h1>
+            {/* Tagline */}
+            {movie.tagline && (
+              <p className="italic text-gray-600 dark:text-gray-300 mb-4">"{movie.tagline}"</p>
+            )}
 
-              {/* Genres */}
-              <div className="flex flex-wrap gap-2 my-4">
-                {movie.genres.map(genre => (
-                  <span 
-                    key={genre.id} 
-                    className="px-3 py-1 bg-blue-600/30 text-blue-100 rounded-full text-sm"
-                  >
-                    {genre.name}
-                  </span>
-                ))}
-              </div>
+            {/* Overview */}
+            <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
+              <p className="text-gray-700 dark:text-gray-300">
+                {movie.overview || "No overview available."}
+              </p>
+            </div>
 
-              {/* Rating and Runtime */}
-              <div className="flex items-center gap-6 mb-6">
-                <div className="flex items-center gap-2">
-                  <StarIcon className="w-5 h-5 text-yellow-400" />
-                  <span className="font-bold">{movie.vote_average.toFixed(1)}</span>
-                  <span className="text-gray-300">/10</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ClockIcon className="w-5 h-5 text-gray-300" />
-                  <span>
-                    {runtimeHours > 0 && `${runtimeHours}h `}
-                    {runtimeMinutes}m
-                  </span>
+            {/* Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <CalendarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Release Date</p>
+                  <p className="text-gray-800 dark:text-gray-200">
+                    {new Date(movie.release_date).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
-
-              {/* Tagline */}
-              {movie.tagline && (
-                <p className="italic text-gray-300 mb-4">"{movie.tagline}"</p>
-              )}
-
-              {/* Overview */}
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <p className="text-gray-200 dark:text-gray-300">
-                  {movie.overview || "No overview available."}
-                </p>
+              <div className="flex items-center gap-3">
+                <FilmIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Director</p>
+                  <p className="text-gray-800 dark:text-gray-200">{director}</p>
+                </div>
               </div>
-
-              {/* Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="flex items-center gap-3">
-                  <CalendarIcon className="w-5 h-5 text-gray-300" />
-                  <div>
-                    <p className="text-sm text-gray-400">Release Date</p>
-                    <p>{new Date(movie.release_date).toLocaleDateString()}</p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <DollarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Budget</p>
+                  <p className="text-gray-800 dark:text-gray-200">
+                    {movie.budget ? `$${movie.budget.toLocaleString()}` : "N/A"}
+                  </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <FilmIcon className="w-5 h-5 text-gray-300" />
-                  <div>
-                    <p className="text-sm text-gray-400">Director</p>
-                    <p>{director}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <DollarIcon className="w-5 h-5 text-gray-300" />
-                  <div>
-                    <p className="text-sm text-gray-400">Budget</p>
-                    <p>{movie.budget ? `$${movie.budget.toLocaleString()}` : "N/A"}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <ChartBarIcon className="w-5 h-5 text-gray-300" />
-                  <div>
-                    <p className="text-sm text-gray-400">Revenue</p>
-                    <p>{movie.revenue ? `$${movie.revenue.toLocaleString()}` : "N/A"}</p>
-                  </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <ChartBarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Revenue</p>
+                  <p className="text-gray-800 dark:text-gray-200">
+                    {movie.revenue ? `$${movie.revenue.toLocaleString()}` : "N/A"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -184,8 +192,8 @@ export default function MovieDetailsPage() {
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="container mx-auto px-4 py-12">
+      {/* Content Sections */}
+      <div className="container mx-auto px-4 pb-12">
         {/* Main Cast */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -222,10 +230,12 @@ export default function MovieDetailsPage() {
                     src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`}
                     alt={video.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <button 
                     className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors"
                     onClick={() => window.open(`https://www.youtube.com/watch?v=${video.key}`, '_blank')}
+                    aria-label={`Play ${video.name}`}
                   >
                     <div className="bg-red-600 p-3 rounded-full">
                       <PlayIcon className="w-6 h-6 text-white" />
@@ -259,6 +269,7 @@ export default function MovieDetailsPage() {
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         alt={movie.title}
                         className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                        loading="lazy"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x450?text=No+Poster';
                         }}

@@ -281,9 +281,9 @@ export const fetchPopularTVShows = async (page = 1, apiLanguage: string): Promis
     return data.results.map(mapTmdbToTVShow);
   }; */
   
-  export const fetchTVShowDetails = async (id: number): Promise<TVShowDetails> => {
+  export const fetchTVShowDetails = async (id: number, language: string = 'en-US'): Promise<TVShowDetails> => {
     const response = await fetch(
-      `${BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos,similar`
+      `${BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar`
     );
     return await response.json();
   };
@@ -292,10 +292,11 @@ export const fetchPopularTVShows = async (page = 1, apiLanguage: string): Promis
 // New Function: Fetch Season Details
 export const fetchSeasonDetails = async (
     tvId: number,
-    seasonNumber: number
+    seasonNumber: number,
+       language: string = 'en-US'
   ): Promise<any> => {
     const response = await fetch(
-      `${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`
+      `${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=${language}`
     );
     if (!response.ok) throw new Error("Failed to fetch season details");
     return await response.json();
@@ -305,10 +306,11 @@ export const fetchSeasonDetails = async (
 export const fetchEpisodeDetails = async (
     tvId: number,
     seasonNumber: number,
-    episodeNumber: number
+    episodeNumber: number,
+     language: string = 'en-US'
   ): Promise<any> => {
     const response = await fetch(
-      `${BASE_URL}/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}?api_key=${TMDB_API_KEY}`
+      `${BASE_URL}/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}?api_key=${TMDB_API_KEY}&language=${language}`
     );
     if (!response.ok) throw new Error("Failed to fetch episode details");
     return await response.json();

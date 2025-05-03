@@ -1,10 +1,9 @@
-// src/pages/TVPage.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MediaCard } from '../components/MediaCard';
 import SectionHeader from '../components/SectionHeader';
 import LoadingSpinner from '../components/LoadingSpinner';
-import {ErrorMessage} from '../components/ErrorMessage';
+import { ErrorMessage } from '../components/ErrorMessage';
 import DropdownFilter from '../components/DropdownFilter';
 import Pagination from '../components/Pagination';
 import { 
@@ -12,10 +11,10 @@ import {
   fetchTopRatedTVShows,
   fetchTVShowsAiringToday,
   fetchTVShowsOnTheAir,
- 
 } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
 import { getApiLanguageCode } from '../utils/languageUtils';
+import { useTheme } from '../context/ThemeContext';
 
 const tvCategories = [
   { value: 'popular', label: 'Popular' },
@@ -44,6 +43,7 @@ const sortOptions = [
 export default function TVPage() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { theme } = useTheme();
   const [category, setCategory] = useState('popular');
   const [year, setYear] = useState('');
   const [sortBy, setSortBy] = useState('popularity.desc');
@@ -52,6 +52,17 @@ export default function TVPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const themeClasses = {
+    bg: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    cardBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+    secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
+    emptyStateBg: theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100',
+    emptyStateText: theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+    filterBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    filterBorder: theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+  };
 
   useEffect(() => {
     const fetchTVShows = async () => {
@@ -108,7 +119,7 @@ export default function TVPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={`min-h-screen ${themeClasses.bg}`}>
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
@@ -120,7 +131,7 @@ export default function TVPage() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className={`flex flex-col md:flex-row gap-4 mb-8 ${themeClasses.filterBg} p-4 rounded-lg shadow border ${themeClasses.filterBorder}`}>
           <DropdownFilter
             label={t('filters.category')}
             options={tvCategories}
@@ -129,6 +140,7 @@ export default function TVPage() {
               setCategory(e.target.value);
               setPage(1);
             }}
+            theme={theme}
           />
           <DropdownFilter
             label={t('filters.year')}
@@ -138,6 +150,7 @@ export default function TVPage() {
               setYear(e.target.value);
               setPage(1);
             }}
+            theme={theme}
           />
           <DropdownFilter
             label={t('filters.sort_by')}
@@ -147,6 +160,7 @@ export default function TVPage() {
               setSortBy(e.target.value);
               setPage(1);
             }}
+            theme={theme}
           />
         </div>
 
@@ -161,6 +175,7 @@ export default function TVPage() {
         <SectionHeader 
           title={tvCategories.find(c => c.value === category)?.label || t('tv_shows.title')}
           count={shows.length}
+          theme={theme}
         />
 
         {shows.length > 0 ? (
@@ -179,6 +194,7 @@ export default function TVPage() {
                     overview: show.overview
                   }}
                   onClick={() => handleShowClick(show.id)}
+                
                 />
               ))}
             </div>
@@ -187,11 +203,12 @@ export default function TVPage() {
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
+             
             />
           </>
         ) : (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-8 text-center">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={`${themeClasses.emptyStateBg} rounded-lg p-8 text-center`}>
+            <p className={themeClasses.emptyStateText}>
               {loading ? t('searching') : t('tv_shows.no_results')}
             </p>
           </div>
