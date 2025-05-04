@@ -97,7 +97,7 @@ export default function TVShowDetailsPage() {
         )}
 
         {/* Back Button */}
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
           aria-label="Go back"
@@ -114,25 +114,28 @@ export default function TVShowDetailsPage() {
           {/* TV Show Poster */}
           <div className="w-full md:w-1/3 lg:w-1/4 order-2 md:order-1">
             <div className="relative group">
-              <img
-                src={tvShow.poster_path
-                  ? `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
-                  : "https://via.placeholder.com/500x750?text=No+Poster"}
-                alt={tvShow.name}
-                className={`w-full h-auto rounded-xl shadow-lg border-4 ${themeClasses.border} transform group-hover:scale-105 transition-transform duration-300`}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
-                }}
-                loading="lazy"
-              />
+              <div className="aspect-[2/3] w-full overflow-hidden rounded-xl shadow-lg border-4">
+                <img
+                  src={tvShow.poster_path
+                    ? `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
+                    : "https://via.placeholder.com/500x750?text=No+Poster"}
+                  alt={tvShow.name}
+                  className={`w-full h-full object-cover ${themeClasses.border} group-hover:scale-105 transition-transform duration-300`}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
+                  }}
+                  loading="lazy"
+                />
+              </div>
+
               {tvShow.videos?.results?.length > 0 && (
                 <button
-                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl"
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 md:group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl active:opacity-100"
                   onClick={() => window.open(`https://www.youtube.com/watch?v=${tvShow.videos.results[0].key}`, '_blank')}
                   aria-label="Play trailer"
                 >
-                  <div className="bg-red-600 p-4 rounded-full">
-                    <PlayIcon className="w-8 h-8 text-white" />
+                  <div className="bg-red-600 p-3 md:p-4 rounded-full">
+                    <PlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
                 </button>
               )}
@@ -151,8 +154,8 @@ export default function TVShowDetailsPage() {
             {/* Genres */}
             <div className="flex flex-wrap gap-2 my-4">
               {tvShow.genres.map(genre => (
-                <span 
-                  key={genre.id} 
+                <span
+                  key={genre.id}
                   className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm"
                 >
                   {genre.name}
@@ -175,27 +178,27 @@ export default function TVShowDetailsPage() {
                 </span>
               </div>
               <div className={`flex items-center gap-2 ${themeClasses.text}`}>
-                  <PlayIcon className="w-5 h-5" />
-                  <span>
+                <PlayIcon className="w-5 h-5" />
+                <span>
                   {tvShow.watch_providers?.results?.US?.flatrate?.length ? (
                     <div className="flex items-center gap-2">
-                    {tvShow.watch_providers.results.US.flatrate.map(provider => (
-                      <div key={provider.provider_id} className="flex items-center gap-1">
-                      <img
-                        src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
-                        alt={provider.provider_name || "Provider Logo"}
-                        className="w-6 h-6 rounded"
-                        loading="lazy"
-                      />
-                      <span>{provider.provider_name || "Unknown Provider"}</span>
-                      </div>
-                    ))}
+                      {tvShow.watch_providers.results.US.flatrate.map(provider => (
+                        <div key={provider.provider_id} className="flex items-center gap-1">
+                          <img
+                            src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
+                            alt={provider.provider_name || "Provider Logo"}
+                            className="w-6 h-6 rounded"
+                            loading="lazy"
+                          />
+                          <span>{provider.provider_name || "Unknown Provider"}</span>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     "No streaming providers available"
                   )}
-                  </span>
-                </div>
+                </span>
+              </div>
             </div>
 
             {/* Tagline */}
@@ -314,11 +317,10 @@ export default function TVShowDetailsPage() {
               <div
                 key={season.season_number}
                 onClick={() => setSelectedSeason(season.season_number)}
-                className={`cursor-pointer rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 ${
-                  selectedSeason === season.season_number 
-                    ? 'ring-2 ring-blue-500 dark:ring-blue-400' 
+                className={`cursor-pointer rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 ${selectedSeason === season.season_number
+                    ? 'ring-2 ring-blue-500 dark:ring-blue-400'
                     : ''
-                }`}
+                  }`}
               >
                 <div className="aspect-[2/3] bg-gray-200 dark:bg-gray-700">
                   {season.poster_path ? (
@@ -352,7 +354,7 @@ export default function TVShowDetailsPage() {
               <h2 className={`text-2xl font-bold ${themeClasses.text}`}>
                 Episodes - {seasonDetails.name}
               </h2>
-              <button 
+              <button
                 onClick={() => setSelectedSeason(null)}
                 className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
               >
@@ -361,11 +363,10 @@ export default function TVShowDetailsPage() {
             </div>
             <div className="space-y-4">
               {seasonDetails.episodes.map((episode: any) => (
-                <div 
-                  key={episode.episode_number} 
-                  className={`flex flex-col md:flex-row gap-4 p-4 rounded-lg ${
-                    theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
-                  } transition-colors`}
+                <div
+                  key={episode.episode_number}
+                  className={`flex flex-col md:flex-row gap-4 p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
+                    } transition-colors`}
                 >
                   <div className="w-full md:w-1/3 lg:w-1/4">
                     <img
