@@ -8,11 +8,25 @@ export interface Article {
   }
   const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
   
-  // Base fetch function
-  async function fetchNews(params: string): Promise<Article[]> {
-    const response = await fetch(`https://newsapi.org/v2/${params}&apiKey=${API_KEY}`);
-    if (!response.ok) throw new Error('News fetch failed');
-    return (await response.json()).articles;
+ // Enhanced fetch function with proper headers
+async function fetchNews(params: string): Promise<Article[]> {
+    const url = `https://newsapi.org/v2/${params}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'X-Api-Key': API_KEY,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'News fetch failed');
+    }
+  
+    const data = await response.json();
+    return data.articles || [];
   }
   
   // Dedicated endpoints
