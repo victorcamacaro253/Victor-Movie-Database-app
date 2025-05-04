@@ -1,6 +1,6 @@
 // src/pages/NewsPage.tsx
 import { useState, useEffect } from 'react';
-import { Article, newsAPI } from '../api/news';
+import { Article } from '../api/news';
 import { NewsSection } from '../components/newsSection';
 import { useTheme } from '../context/ThemeContext';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -17,23 +17,25 @@ export default function NewsPage() {
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    const fetchAllNews = async () => {
-      try {
-        setLoading(true);
-        const [film, tv, entertainment] = await Promise.all([
-          newsAPI.fetchFilmNews(12),
-          newsAPI.fetchTVNews(12),
-          newsAPI.fetchEntertainmentNews(12)
-        ]);
-        setFilmNews(film);
-        setTVNews(tv);
-        setEntertainmentNews(entertainment);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load news');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // In your fetchAllNews function
+const fetchAllNews = async () => {
+    try {
+      setLoading(true);
+      const [film, tv, entertainment] = await Promise.all([
+        fetch('/.netlify/functions/getNews?type=film&limit=12').then(res => res.json()),
+        fetch('/.netlify/functions/getNews?type=tv&limit=12').then(res => res.json()),
+        fetch('/.netlify/functions/getNews?type=entertainment&limit=12').then(res => res.json())
+      ]);
+      setFilmNews(film);
+      console.log('film',film)
+      setTVNews(tv);
+      setEntertainmentNews(entertainment);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load news');
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchAllNews();
   }, []);
