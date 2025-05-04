@@ -1,4 +1,4 @@
-const CACHE_EXPIRY_HOURS = 6; // Data refreshes every 6 hours
+const CACHE_EXPIRY_HOURS = 8; // Data refreshes every 6 hours
 
 interface CacheEntry<T> {
   data: T;
