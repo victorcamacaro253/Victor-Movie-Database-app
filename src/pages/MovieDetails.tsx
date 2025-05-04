@@ -153,13 +153,13 @@ export default function MovieDetailsPage() {
                   <PlayIcon className="w-5 h-5" />
                   <span>
                   {movie.watch_providers?.results?.US?.flatrate ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                     {movie.watch_providers.results.US.flatrate.map(provider => (
                       <div key={provider.provider_id} className="flex items-center gap-1">
                       <img
                         src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
                         alt={provider.provider_name}
-                        className="w-6 h-6 rounded"
+                        className="w-6 h-6 objet contain"
                         loading="lazy"
                       />
                       <span>{provider.provider_name}</span>

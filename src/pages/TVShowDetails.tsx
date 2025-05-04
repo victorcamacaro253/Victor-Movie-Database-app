@@ -128,17 +128,27 @@ export default function TVShowDetailsPage() {
                 />
               </div>
 
-              {tvShow.videos?.results?.length > 0 && (
-                <button
-                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 md:group-hover:opacity-100 transition-opacity bg-black/50 rounded-xl active:opacity-100"
-                  onClick={() => window.open(`https://www.youtube.com/watch?v=${tvShow.videos.results[0].key}`, '_blank')}
-                  aria-label="Play trailer"
-                >
-                  <div className="bg-red-600 p-3 md:p-4 rounded-full">
-                    <PlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
-                  </div>
-                </button>
-              )}
+            {tvShow.videos?.results?.length > 0 && (
+  <button
+    className="absolute inset-0 flex items-center justify-center 
+              opacity-0 group-hover:opacity-100 
+              md:group-hover:opacity-100 
+              transition-opacity duration-200
+              bg-black/50 rounded-xl
+              active:opacity-100 focus:opacity-100
+              md:active:opacity-100"
+    onClick={() => window.open(`https://www.youtube.com/watch?v=${tvShow.videos.results[0].key}`, '_blank')}
+    aria-label={`Play ${tvShow.name} trailer`}
+  >
+    <div className="bg-red-600 p-3 md:p-4 rounded-full 
+                   hover:bg-red-700 active:bg-red-800
+                   transition-colors duration-200
+                   min-w-[48px] min-h-[48px] 
+                   flex items-center justify-center">
+      <PlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+    </div>
+  </button>
+)}
             </div>
           </div>
 
@@ -182,17 +192,20 @@ export default function TVShowDetailsPage() {
                 <span>
                   {tvShow.watch_providers?.results?.US?.flatrate?.length ? (
                     <div className="flex items-center gap-2">
-                      {tvShow.watch_providers.results.US.flatrate.map(provider => (
-                        <div key={provider.provider_id} className="flex items-center gap-1">
-                          <img
-                            src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
-                            alt={provider.provider_name || "Provider Logo"}
-                            className="w-6 h-6 rounded"
-                            loading="lazy"
-                          />
-                          <span>{provider.provider_name || "Unknown Provider"}</span>
-                        </div>
-                      ))}
+                      {tvShow.watch_providers?.results?.US?.flatrate?.length > 0 && (
+  <div className="flex items-center gap-2">
+    {tvShow.watch_providers.results.US.flatrate.map(provider => (
+      <img
+        key={provider.provider_id}
+        src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+        alt={provider.provider_name}
+        title={provider.provider_name}
+        className="w-6 h-6 object-contain"
+      />
+    ))}
+  </div>
+)}
+
                     </div>
                   ) : (
                     "No streaming providers available"
