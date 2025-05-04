@@ -10,24 +10,24 @@ export interface Article {
   
  // Enhanced fetch function with proper headers
 async function fetchNews(params: string): Promise<Article[]> {
-    const url = `https://newsapi.org/v2/${params}`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'X-Api-Key': API_KEY,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
+  const url = `https://newsapi.org/v2/${params}`;
   
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'News fetch failed');
+  const response = await fetch(url, {
+    headers: {
+      'X-Api-Key': API_KEY,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     }
-  
-    const data = await response.json();
-    return data.articles || [];
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'News fetch failed');
   }
+
+  const data = await response.json();
+  return data.articles || [];
+}
   
   // Dedicated endpoints
   export const newsAPI = {

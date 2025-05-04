@@ -17,7 +17,7 @@ import BoxOfficeCard from '../components/BoxOfficeCard';
 import { SearchResult } from '../types/movie';
 import { useTheme } from '../context/ThemeContext';
 import { NewsSection } from '../components/newsSection';
-import { Article, newsAPI } from '../api/news';
+import { Article } from '../api/news';
 
 
 export default function HomePage() {
@@ -76,8 +76,11 @@ const [, setNewsError] = useState<string | null>(null);
     const fetchFilmNews = async () => {
       try {
         setNewsLoading(true);
-        const news = await newsAPI.fetchFilmNews(4); // Get 4 articles
-        setFilmNews(news);
+    //    const news = await newsAPI.fetchFilmNews(4); // Get 4 articles
+    const response = await fetch('/.netlify/functions/getNews?type=film&limit=4');
+    const data = await response.json();
+    console.log('news',data)
+    setFilmNews(data);
       } catch (err) {
         setNewsError(err instanceof Error ? err.message : 'Failed to fetch film news');
       } finally {
@@ -223,11 +226,10 @@ const [, setNewsError] = useState<string | null>(null);
             
 
             <NewsSection 
-          articles={filmNews}
-          title="🎬 Film Industry News"
-          subtitle="Production updates, box office results"
-          theme={theme}
-        />
+                articles={filmNews}
+                title="🎬 Film Industry News"
+                subtitle="Production updates, box office results"
+                theme={theme} showViewAll={false}        />
 
     <div className="container mx-auto px-4 py-8">
       <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>

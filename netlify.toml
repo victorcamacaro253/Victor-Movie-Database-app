@@ -1,0 +1,17 @@
+[build]
+  functions = "netlify/functions" # Where your functions live
+  publish = "dist" # Your frontend build folder
+
+# Make functions available at /api/* instead of /.netlify/functions/*
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+  # Required for local development
+[[dev]]
+  command = "npm run dev" # your frontend dev command
+  targetPort = 5173 # your frontend port
+  publish = "dist"
+  functions = "netlify/functions"
