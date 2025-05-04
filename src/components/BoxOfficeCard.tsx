@@ -104,7 +104,7 @@ const formatDisplayDate = (dateString: string) => {
                     to={item.url} 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`font-medium hover:underline ${themeClasses.text}`}
+                    className={`font-medium text-sm hover:underline ${themeClasses.text}`}
                   >
                     {item.title}
                   </Link>

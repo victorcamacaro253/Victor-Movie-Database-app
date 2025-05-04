@@ -203,7 +203,7 @@ export default function HomePage() {
             <div className="container mx-auto px-4 py-8">
       <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
       {dailyData && (
           <BoxOfficeCard
             title="Daily (US) Box Office"
