@@ -8,6 +8,8 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { StarIcon, ClockIcon, CalendarIcon, DollarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
 import { getApiLanguageCode } from '../utils/languageUtils';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from "../context/ThemeContext";
+//import StreamingPlatforms from '../components/StreamingPlatforms';
 
 export default function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +18,7 @@ export default function MovieDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { language } = useLanguage();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -43,8 +46,17 @@ export default function MovieDetailsPage() {
   const runtimeHours = Math.floor(movie.runtime / 60);
   const runtimeMinutes = movie.runtime % 60;
 
+
+  const themeClasses = {
+    bg: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    cardBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+    secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
+    border: theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className={`min-h-screen ${themeClasses.bg}`}>
       {/* Hero Section - Redesigned */}
       <div className="relative">
         {movie.backdrop_path ? (
@@ -83,7 +95,7 @@ export default function MovieDetailsPage() {
                   ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
                   : "https://via.placeholder.com/500x750?text=No+Poster"}
                 alt={movie.Title}
-                className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform group-hover:scale-105 transition-transform duration-300"
+                className={`w-full h-auto rounded-xl shadow-lg border-4 ${themeClasses.border} transform group-hover:scale-105 transition-transform duration-300`} 
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
                 }}
@@ -103,8 +115,8 @@ export default function MovieDetailsPage() {
           </div>
 
           {/* Movie Info - Improved readability */}
-          <div className="order-1 md:order-2 flex-1 bg-white/90 dark:bg-gray-900/80 p-6 rounded-xl backdrop-blur-sm shadow-lg">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-gray-900 dark:text-white">
+          <div className={`order-1 md:order-2 flex-1 ${themeClasses.bg} p-6 rounded-xl backdrop-blur-sm shadow-lg`}>
+            <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${themeClasses.text}`}>
               {movie.Title}
               <span className="block md:inline md:ml-2 text-gray-600 dark:text-gray-300">
                 ({movie.release_date.split('-')[0]})
@@ -125,69 +137,92 @@ export default function MovieDetailsPage() {
 
             {/* Rating and Runtime */}
             <div className="flex items-center gap-6 mb-6">
-              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+              <div className={`flex items-center gap-2 ${themeClasses.text}`}>
                 <StarIcon className="w-5 h-5 text-yellow-500" />
                 <span className="font-bold">{movie.vote_average.toFixed(1)}</span>
-                <span className="text-gray-500 dark:text-gray-400">/10</span>
+                <span className={themeClasses.secondaryText}>/10</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
-                <ClockIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                <ClockIcon className="w-5 h-5" />
                 <span>
                   {runtimeHours > 0 && `${runtimeHours}h `}
                   {runtimeMinutes}m
                 </span>
               </div>
+                <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                  <PlayIcon className="w-5 h-5" />
+                  <span>
+                  {movie.watch_providers?.results?.US?.flatrate ? (
+                    <div className="flex items-center gap-2">
+                    {movie.watch_providers.results.US.flatrate.map(provider => (
+                      <div key={provider.provider_id} className="flex items-center gap-1">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
+                        alt={provider.provider_name}
+                        className="w-6 h-6 rounded"
+                        loading="lazy"
+                      />
+                      <span>{provider.provider_name}</span>
+                      </div>
+                    ))}
+                    </div>
+                  ) : (
+                    "No streaming providers available"
+                  )}
+                  </span>
+                </div>
             </div>
 
             {/* Tagline */}
             {movie.tagline && (
-              <p className="italic text-gray-600 dark:text-gray-300 mb-4">"{movie.tagline}"</p>
+              <p className={`italic ${themeClasses.secondaryText}`}>"{movie.tagline}"</p>
             )}
 
             {/* Overview */}
             <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
-              <p className="text-gray-700 dark:text-gray-300">
+            <p className={themeClasses.text}>
                 {movie.overview || "No overview available."}
               </p>
             </div>
 
             {/* Details Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <CalendarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Release Date</p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    {new Date(movie.release_date).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <FilmIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Director</p>
-                  <p className="text-gray-800 dark:text-gray-200">{director}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <DollarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Budget</p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    {movie.budget ? `$${movie.budget.toLocaleString()}` : "N/A"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <ChartBarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Revenue</p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    {movie.revenue ? `$${movie.revenue.toLocaleString()}` : "N/A"}
-                  </p>
-                </div>
-              </div>
-            </div>
+                          <div className="flex items-center gap-3">
+                            <CalendarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
+                            <div>
+                              <p className={`text-sm ${themeClasses.secondaryText}`}>Release Date</p>
+                              <p className={themeClasses.text}>
+                                {new Date(movie.release_date).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <FilmIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
+                            <div>
+                              <p className={`text-sm ${themeClasses.secondaryText}`}>Director</p>
+                              <p className={themeClasses.text}>{director}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <DollarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
+                            <div>
+                              <p className={`text-sm ${themeClasses.secondaryText}`}>Budget</p>
+                              <p className={themeClasses.text}>
+                                {movie.budget ? `$${movie.budget.toLocaleString()}` : "N/A"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <ChartBarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
+                            <div>
+                              <p className={`text-sm ${themeClasses.secondaryText}`}>Revenue</p>
+                              <p className={themeClasses.text}>
+                                {movie.revenue ? `$${movie.revenue.toLocaleString()}` : "N/A"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        
           </div>
         </div>
       </div>
@@ -195,7 +230,7 @@ export default function MovieDetailsPage() {
       {/* Content Sections */}
       <div className="container mx-auto px-4 pb-12">
         {/* Main Cast */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
               Main Cast
@@ -212,7 +247,7 @@ export default function MovieDetailsPage() {
           
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {mainCast.map(actor => (
-              <ActorCard key={actor.id} actor={actor} />
+              <ActorCard key={actor.id} actor={actor} theme={theme} />
             ))}
           </div>
         </div>
@@ -249,6 +284,7 @@ export default function MovieDetailsPage() {
             </div>
           </div>
         )}
+      
 
         {/* Similar Movies */}
         {(movie.similar?.results?.length ?? 0) > 0 && (

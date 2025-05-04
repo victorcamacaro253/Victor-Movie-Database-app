@@ -7,6 +7,7 @@ interface MediaCardProps {
   item: SearchResult;
   onClick: () => void;
   
+  
 }
 
 export function MediaCard({ item, onClick }: MediaCardProps) {

@@ -167,7 +167,7 @@ export const searchMulti = async (query: string): Promise<SearchResult[]> => {
 export const fetchMovieDetails = async (id: number, language: string = 'en-US'): Promise<MovieDetails> => {
   try {
     const response = await fetch(
-      `${BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar`
+      `${BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar,watch/providers`
     );
     
     if (!response.ok) {
@@ -175,7 +175,7 @@ export const fetchMovieDetails = async (id: number, language: string = 'en-US'):
     }
     
     const data = await response.json();
-    
+    console.log(data);
     // Transform the API response to match your MovieDetails interface
     return {
       ...data,
@@ -189,6 +189,7 @@ export const fetchMovieDetails = async (id: number, language: string = 'en-US'):
       Metascore: '',
       imdbRating: data.vote_average ? (data.vote_average).toString() : '',
       imdbVotes: data.vote_count ? data.vote_count.toString() : '',
+      watch_providers: data['watch/providers'] // Add watch providers data
     };
   } catch (error) {
     console.error('Error fetching movie details:', error);
@@ -218,10 +219,10 @@ export const fetchMovieDetails = async (id: number, language: string = 'en-US'):
 
   // src/api/tmdb.ts
 // src/api/tmdb.ts
-export const fetchActorDetails = async (actorId: string): Promise<ActorDetails> => {
+export const fetchActorDetails = async (actorId: string,language: string = 'en-US'): Promise<ActorDetails> => {
     try {
       const response = await fetch(
-        `${BASE_URL}/person/${actorId}?api_key=${TMDB_API_KEY}&append_to_response=movie_credits,tv_credits,images`
+        `${BASE_URL}/person/${actorId}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=movie_credits,tv_credits,images`
       );
       
       if (!response.ok) {
@@ -283,9 +284,14 @@ export const fetchPopularTVShows = async (page = 1, apiLanguage: string): Promis
   
   export const fetchTVShowDetails = async (id: number, language: string = 'en-US'): Promise<TVShowDetails> => {
     const response = await fetch(
-      `${BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar`
+      `${BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=${language}&append_to_response=credits,videos,similar,watch/providers`
     );
-    return await response.json();
+    const data= await response.json();
+    return {
+      ...data,
+      // Your other transformations
+      watch_providers: data['watch/providers'] || null
+    };
   };
 
 

@@ -83,4 +83,29 @@ export interface TVShow {
       episode_number: number;
       season_number: number;
     } | null;
+    watch_providers?: {
+      results: {
+        [countryCode: string]: {
+          link: string;
+          flatrate?: Array<{
+            display_priority: number;
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+          }>;
+          free?: Array<{  // Some shows might be on free platforms
+            display_priority: number;
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+          }>;
+          buy?: Array<{
+            display_priority: number;
+            logo_path: string;
+            provider_id: number;
+            provider_name: string;
+          }>;
+        };
+      };
+    };
   }

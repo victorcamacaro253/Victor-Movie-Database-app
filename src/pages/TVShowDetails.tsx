@@ -8,6 +8,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { StarIcon, ClockIcon, CalendarIcon, ChartBarIcon, FilmIcon, PlayIcon } from '../components/Icons';
 import { getApiLanguageCode } from '../utils/languageUtils';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from "../context/ThemeContext";
 
 export default function TVShowDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,7 @@ export default function TVShowDetailsPage() {
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
   const [seasonDetails, setSeasonDetails] = useState<any>(null);
   const { language } = useLanguage();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchTVShow = async () => {
@@ -25,6 +27,7 @@ export default function TVShowDetailsPage() {
         setLoading(true);
         const apiLanguage = getApiLanguageCode(language);
         const data = await fetchTVShowDetails(Number(id), apiLanguage);
+        console.log(data)
         if (data) {
           setTVShow(data);
           // Auto-select first season if available
@@ -67,9 +70,17 @@ export default function TVShowDetailsPage() {
   const runtimeHours = Math.floor((tvShow.episode_run_time?.[0] || 0) / 60);
   const runtimeMinutes = (tvShow.episode_run_time?.[0] || 0) % 60;
 
+  const themeClasses = {
+    bg: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    cardBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+    secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
+    border: theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Hero Section - Redesigned */}
+    <div className={`min-h-screen ${themeClasses.bg}`}>
+      {/* Hero Section */}
       <div className="relative">
         {tvShow.backdrop_path ? (
           <>
@@ -85,7 +96,7 @@ export default function TVShowDetailsPage() {
           <div className="w-full aspect-[2/1] md:aspect-[3/1] bg-gray-800" />
         )}
 
-        {/* Back Button - Fixed Position */}
+        {/* Back Button */}
         <button 
           onClick={() => navigate(-1)}
           className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
@@ -100,7 +111,7 @@ export default function TVShowDetailsPage() {
       {/* Main Content Container */}
       <div className="container mx-auto px-4 py-8 md:py-12 relative z-20 -mt-16 md:-mt-24">
         <div className="flex flex-col md:flex-row gap-8 items-start">
-          {/* TV Show Poster - Now appears below on mobile */}
+          {/* TV Show Poster */}
           <div className="w-full md:w-1/3 lg:w-1/4 order-2 md:order-1">
             <div className="relative group">
               <img
@@ -108,7 +119,7 @@ export default function TVShowDetailsPage() {
                   ? `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
                   : "https://via.placeholder.com/500x750?text=No+Poster"}
                 alt={tvShow.name}
-                className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform group-hover:scale-105 transition-transform duration-300"
+                className={`w-full h-auto rounded-xl shadow-lg border-4 ${themeClasses.border} transform group-hover:scale-105 transition-transform duration-300`}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Poster';
                 }}
@@ -128,16 +139,16 @@ export default function TVShowDetailsPage() {
             </div>
           </div>
 
-          {/* TV Show Info - Improved readability */}
-          <div className="order-1 md:order-2 flex-1 bg-white/90 dark:bg-gray-900/80 p-6 rounded-xl backdrop-blur-sm shadow-lg">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-gray-900 dark:text-white">
+          {/* TV Show Info */}
+          <div className={`order-1 md:order-2 flex-1 ${themeClasses.cardBg} p-6 rounded-xl shadow-lg`}>
+            <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${themeClasses.text}`}>
               {tvShow.name}
               <span className="block md:inline md:ml-2 text-gray-600 dark:text-gray-300">
                 ({tvShow.first_air_date.split('-')[0]})
               </span>
             </h1>
 
-            {/* Genres - Better contrast */}
+            {/* Genres */}
             <div className="flex flex-wrap gap-2 my-4">
               {tvShow.genres.map(genre => (
                 <span 
@@ -151,28 +162,50 @@ export default function TVShowDetailsPage() {
 
             {/* Rating and Runtime */}
             <div className="flex items-center gap-6 mb-6">
-              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+              <div className={`flex items-center gap-2 ${themeClasses.text}`}>
                 <StarIcon className="w-5 h-5 text-yellow-500" />
                 <span className="font-bold">{tvShow.vote_average.toFixed(1)}</span>
-                <span className="text-gray-500 dark:text-gray-400">/10</span>
+                <span className={themeClasses.secondaryText}>/10</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
-                <ClockIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                <ClockIcon className="w-5 h-5" />
                 <span>
                   {runtimeHours > 0 && `${runtimeHours}h `}
                   {runtimeMinutes}m (per episode)
                 </span>
               </div>
+              <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                  <PlayIcon className="w-5 h-5" />
+                  <span>
+                  {tvShow.watch_providers?.results?.US?.flatrate?.length ? (
+                    <div className="flex items-center gap-2">
+                    {tvShow.watch_providers.results.US.flatrate.map(provider => (
+                      <div key={provider.provider_id} className="flex items-center gap-1">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
+                        alt={provider.provider_name || "Provider Logo"}
+                        className="w-6 h-6 rounded"
+                        loading="lazy"
+                      />
+                      <span>{provider.provider_name || "Unknown Provider"}</span>
+                      </div>
+                    ))}
+                    </div>
+                  ) : (
+                    "No streaming providers available"
+                  )}
+                  </span>
+                </div>
             </div>
 
             {/* Tagline */}
             {tvShow.tagline && (
-              <p className="italic text-gray-600 dark:text-gray-300 mb-4">"{tvShow.tagline}"</p>
+              <p className={`italic ${themeClasses.secondaryText}`}>"{tvShow.tagline}"</p>
             )}
 
             {/* Overview */}
             <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className={themeClasses.text}>
                 {tvShow.overview || "No overview available."}
               </p>
             </div>
@@ -180,33 +213,33 @@ export default function TVShowDetailsPage() {
             {/* Details Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
-                <CalendarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <CalendarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">First Air Date</p>
-                  <p className="text-gray-800 dark:text-gray-200">
+                  <p className={`text-sm ${themeClasses.secondaryText}`}>First Air Date</p>
+                  <p className={themeClasses.text}>
                     {new Date(tvShow.first_air_date).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <FilmIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <FilmIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
-                  <p className="text-gray-800 dark:text-gray-200">{creator}</p>
+                  <p className={`text-sm ${themeClasses.secondaryText}`}>Creator</p>
+                  <p className={themeClasses.text}>{creator}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <ChartBarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <ChartBarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Seasons</p>
-                  <p className="text-gray-800 dark:text-gray-200">{tvShow.number_of_seasons}</p>
+                  <p className={`text-sm ${themeClasses.secondaryText}`}>Seasons</p>
+                  <p className={themeClasses.text}>{tvShow.number_of_seasons}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <ChartBarIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <ChartBarIcon className={`w-5 h-5 ${themeClasses.secondaryText}`} />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Episodes</p>
-                  <p className="text-gray-800 dark:text-gray-200">{tvShow.number_of_episodes}</p>
+                  <p className={`text-sm ${themeClasses.secondaryText}`}>Episodes</p>
+                  <p className={themeClasses.text}>{tvShow.number_of_episodes}</p>
                 </div>
               </div>
             </div>
@@ -217,9 +250,9 @@ export default function TVShowDetailsPage() {
       {/* Content Sections */}
       <div className="container mx-auto px-4 pb-12">
         {/* Main Cast */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <h2 className={`text-2xl font-bold ${themeClasses.text}`}>
               Main Cast
             </h2>
             {tvShow.credits.cast.length > 8 && (
@@ -233,15 +266,15 @@ export default function TVShowDetailsPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {mainCast.map(actor => (
-              <ActorCard key={actor.id} actor={actor} />
+              <ActorCard key={actor.id} actor={actor} theme={theme} />
             ))}
           </div>
         </div>
 
         {/* Videos */}
         {tvShow.videos?.results?.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+          <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
+            <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6`}>
               Videos
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -271,9 +304,9 @@ export default function TVShowDetailsPage() {
           </div>
         )}
 
-        {/* Seasons Section - Improved */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+        {/* Seasons Section */}
+        <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
+          <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6`}>
             Seasons
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -301,9 +334,9 @@ export default function TVShowDetailsPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-3 bg-white dark:bg-gray-700">
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{season.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                <div className={`p-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                  <h3 className={`font-semibold ${themeClasses.text}`}>{season.name}</h3>
+                  <p className={`text-sm ${themeClasses.secondaryText}`}>
                     {season.episode_count} Episodes
                   </p>
                 </div>
@@ -314,9 +347,9 @@ export default function TVShowDetailsPage() {
 
         {/* Episodes Section */}
         {selectedSeason !== null && seasonDetails && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+          <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+              <h2 className={`text-2xl font-bold ${themeClasses.text}`}>
                 Episodes - {seasonDetails.name}
               </h2>
               <button 
@@ -330,7 +363,9 @@ export default function TVShowDetailsPage() {
               {seasonDetails.episodes.map((episode: any) => (
                 <div 
                   key={episode.episode_number} 
-                  className="flex flex-col md:flex-row gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  className={`flex flex-col md:flex-row gap-4 p-4 rounded-lg ${
+                    theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
+                  } transition-colors`}
                 >
                   <div className="w-full md:w-1/3 lg:w-1/4">
                     <img
@@ -346,23 +381,23 @@ export default function TVShowDetailsPage() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
-                      <span className="font-bold text-gray-800 dark:text-white">
+                      <span className={`font-bold ${themeClasses.text}`}>
                         Episode {episode.episode_number}
                       </span>
                       {episode.vote_average > 0 && (
-                        <span className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                        <span className={`flex items-center text-sm ${themeClasses.secondaryText}`}>
                           <StarIcon className="w-4 h-4 text-yellow-500 mr-1" />
                           {episode.vote_average.toFixed(1)}
                         </span>
                       )}
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                    <h3 className={`text-lg font-semibold ${themeClasses.text} mb-2`}>
                       {episode.name}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                    <p className={`${themeClasses.secondaryText} mb-2`}>
                       {episode.overview || "No description available."}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className={`text-sm ${themeClasses.secondaryText}`}>
                       Air Date: {episode.air_date || "N/A"}
                     </p>
                   </div>
@@ -374,8 +409,8 @@ export default function TVShowDetailsPage() {
 
         {/* Similar Shows */}
         {tvShow.similar?.results?.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+          <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6`}>
+            <h2 className={`text-2xl font-bold ${themeClasses.text} mb-6`}>
               Similar Shows
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

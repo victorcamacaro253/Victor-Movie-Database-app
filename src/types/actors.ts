@@ -4,7 +4,9 @@ export interface ActorCardProps {
       id: number;
       name: string;
       profile_path: string | null; // Make profile_path nullable
+      
     };
+    theme?: 'light' | 'dark'
   }
   
   export interface MovieCredit {

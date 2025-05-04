@@ -1,23 +1,29 @@
-// src/pages/ActorDetails.tsx
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fetchActorDetails } from '../api/tmdb';
 import { ActorDetails } from "../types/actors";
 import { StarIcon, CalendarIcon, MapPinIcon, FilmIcon, TvIcon } from "../components/Icons";
 import LoadingSpinner from "../components/LoadingSpinner";
-import {ErrorMessage} from "../components/ErrorMessage";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { useTheme } from "../context/ThemeContext";
+import { getApiLanguageCode } from "../utils/languageUtils";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ActorDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  
   const [actor, setActor] = useState<ActorDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { theme } = useTheme();
+  const { language } = useLanguage();
 
   useEffect(() => {
     const fetchActor = async () => {
       try {
         setLoading(true);
-        const data = await fetchActorDetails(id!);
+        const apiLanguage = getApiLanguageCode(language);
+        const data = await fetchActorDetails(id!, apiLanguage);
         if (data) setActor(data);
         else setError("Actor not found");
       } catch (err) {
@@ -27,7 +33,15 @@ export default function ActorDetailsPage() {
       }
     };
     fetchActor();
-  }, [id]);
+  }, [id, language]);
+
+  const themeClasses = {
+    bg: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    cardBg: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
+    text: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
+    secondaryText: theme === 'dark' ? 'text-gray-400' : 'text-gray-600',
+    border: theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+  };
 
   if (loading) return <LoadingSpinner fullPage />;
   if (error) return <ErrorMessage message={error} />;
@@ -36,61 +50,82 @@ export default function ActorDetailsPage() {
   const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className={`min-h-screen ${themeClasses.bg}`}>
       {/* Hero Section */}
-      <div className="relative">
-        {actor.profile_path && (
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10" />
-        )}
-        <div className="container mx-auto px-4 py-16 relative z-20">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            {actor.profile_path && (
-              <div className="w-full md:w-1/3 lg:w-1/4">
+     
+
+      {/* Main Content Container */}
+      <div className="container mx-auto px-4 py-8 md:py-12 relative z-20 -mt-16 md:-mt-24">
+        <div className="flex mt-20 flex-col md:flex-row gap-8 items-start">
+          {/* Actor Photo */}
+          {actor.profile_path && (
+            <div className="w-full md:w-1/3 lg:w-1/4">
+              <div className="relative group">
                 <img
                   src={`${imageBaseUrl}${actor.profile_path}`}
                   alt={actor.name}
-                  className="w-full h-auto rounded-xl shadow-2xl border-4 border-white dark:border-gray-800 transform -rotate-2 hover:rotate-0 transition-transform duration-300"
+                  className={`w-full h-auto rounded-xl shadow-lg border-4 ${themeClasses.border} transform group-hover:scale-105 transition-transform duration-300`}
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/500x750?text=No+Photo';
+                  }}
                 />
               </div>
-            )}
-            
-            <div className="flex-1 text-white">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">
-                {actor.name}
-              </h1>
-              
-              <div className="flex items-center gap-4 mb-6">
-                {actor.birthday && (
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-5 h-5" />
-                    <span>{new Date(actor.birthday).toLocaleDateString()}</span>
-                  </div>
-                )}
-                {actor.place_of_birth && (
-                  <div className="flex items-center gap-2">
-                    <MapPinIcon className="w-5 h-5" />
-                    <span>{actor.place_of_birth}</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <p className="text-gray-200 dark:text-gray-300">
-                  {actor.biography || "Biography not available."}
-                </p>
-              </div>
             </div>
+          )}
+          
+          {/* Actor Info */}
+          <div className={`flex-1 ${themeClasses.cardBg} p-6 rounded-xl shadow-lg`}>
+            <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${themeClasses.text}`}>
+              {actor.name}
+            </h1>
+            
+            {/* Personal Info */}
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              {actor.birthday && (
+                <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                  <CalendarIcon className="w-5 h-5" />
+                  <span>{new Date(actor.birthday).toLocaleDateString()}</span>
+                  {actor.deathday && (
+                    <span className={themeClasses.secondaryText}>
+                      - {new Date(actor.deathday).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              )}
+              {actor.place_of_birth && (
+                <div className={`flex items-center gap-2 ${themeClasses.text}`}>
+                  <MapPinIcon className="w-5 h-5" />
+                  <span>{actor.place_of_birth}</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Biography */}
+            <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
+              <p className={themeClasses.text}>
+                {actor.biography || "Biography not available."}
+              </p>
+            </div>
+
+            {/* Known For */}
+            {actor.known_for_department && (
+              <div className={`flex items-center gap-3 ${themeClasses.text}`}>
+                <span className="font-semibold">Known For:</span>
+                <span>{actor.known_for_department}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="container mx-auto px-4 py-12">
+      {/* Content Sections */}
+      <div className="container mx-auto px-4 pb-12">
         {/* Filmography */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6 mb-8`}>
           <div className="flex items-center gap-3 mb-6">
             <FilmIcon className="w-8 h-8 text-blue-500" />
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <h2 className={`text-2xl font-bold ${themeClasses.text}`}>
               Filmography
             </h2>
           </div>
@@ -108,6 +143,7 @@ export default function ActorDetailsPage() {
                       src={`${imageBaseUrl}${movie.poster_path}`}
                       alt={movie.title}
                       className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                      loading="lazy"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x450?text=No+Poster';
                       }}
@@ -137,10 +173,10 @@ export default function ActorDetailsPage() {
 
         {/* TV Credits */}
         {actor.tv_credits && actor.tv_credits.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className={`${themeClasses.cardBg} rounded-xl shadow-lg p-6`}>
             <div className="flex items-center gap-3 mb-6">
               <TvIcon className="w-8 h-8 text-purple-500" />
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+              <h2 className={`text-2xl font-bold ${themeClasses.text}`}>
                 TV Appearances
               </h2>
             </div>
@@ -158,6 +194,7 @@ export default function ActorDetailsPage() {
                         src={`${imageBaseUrl}${show.poster_path}`}
                         alt={show.name}
                         className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                        loading="lazy"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x450?text=No+Poster';
                         }}

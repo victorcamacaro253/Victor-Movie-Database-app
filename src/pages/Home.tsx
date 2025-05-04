@@ -1,16 +1,19 @@
 // src/pages/HomePage.tsx
+import { useEffect } from 'react';
 import { useTmdbMovies } from '../hooks/useTmdbMovies';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 import { MediaCard } from '../components/MediaCard';
 import SearchBar from '../components/SearchBar';
 import SectionHeader from '../components/SectionHeader';
+import { fetchDomesticBoxOffice,fetchWorldwideBoxOffice,fetchDailyBoxOffice,fetchWeekendBoxOffice } from '../api/boxOffice';      
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useState } from 'react';
 //import { searchMovies } from '../api/movies';
 import { searchMulti } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
+import BoxOfficeCard from '../components/BoxOfficeCard';
 import { SearchResult } from '../types/movie';
 import { useTheme } from '../context/ThemeContext';
 
@@ -32,7 +35,38 @@ export default function HomePage() {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [worldwideData, setWorldwideData] = useState<any>(null);
+  const [domesticData, setDomesticData] = useState<any>(null);
+  const [dailyData, setDailyData] = useState<any>(null);
+  const [weekendData, setWeekendData] = useState<any>(null);
+  const [, setError] = useState<string | null>(null)
+  const [, setLoading] = useState(true);
   const { theme } = useTheme();
+
+  
+  useEffect(() => {
+    const fetchBoxOffice = async () => {
+      try {
+        setLoading(true);
+        const [worldwide, domestic,daily,weekend] = await Promise.all([
+          fetchWorldwideBoxOffice(),
+          fetchDomesticBoxOffice(),
+          fetchDailyBoxOffice(),
+          fetchWeekendBoxOffice()
+        ]);
+        setWorldwideData(worldwide);
+        setDomesticData(domestic);
+        setDailyData(daily);
+        setWeekendData(weekend);
+      } catch (err) {
+        setError('Failed to load box office data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBoxOffice();
+  }, []);
 
   const handleSearch = async () => {
     if (!query.trim()) {
@@ -166,6 +200,44 @@ export default function HomePage() {
               )}
             </section>
 
+            <div className="container mx-auto px-4 py-8">
+      <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {dailyData && (
+          <BoxOfficeCard
+            title="Daily (US) Box Office"
+            data={dailyData.data}
+            lastUpdated={dailyData.lastUpdated}
+            isDailyData={true}
+          />
+        )}
+      {weekendData && (
+          <BoxOfficeCard
+            title="Weekend (US) Box Office"
+            data={weekendData.data}
+            lastUpdated={weekendData.lastUpdated}
+          />
+        )}
+        {domesticData && (
+          <BoxOfficeCard
+            title="Domestic (US) Box Office"
+            data={domesticData.data}
+            lastUpdated={domesticData.lastUpdated}
+          />
+        )}
+        
+        {worldwideData && (
+          <BoxOfficeCard
+            title="Worldwide Box Office"
+            data={worldwideData.data}
+            lastUpdated={worldwideData.lastUpdated}
+          />
+        )}
+      </div>
+    </div>
+  
+
             {/* Now Playing Movies Section */}
             <section className="mb-12">
               <SectionHeader
@@ -221,3 +293,6 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+
