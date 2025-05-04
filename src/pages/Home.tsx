@@ -16,6 +16,9 @@ import { useLanguage } from '../context/LanguageContext';
 import BoxOfficeCard from '../components/BoxOfficeCard';
 import { SearchResult } from '../types/movie';
 import { useTheme } from '../context/ThemeContext';
+import { NewsSection } from '../components/newsSection';
+import { Article, newsAPI } from '../api/news';
+
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -42,6 +45,9 @@ export default function HomePage() {
   const [, setError] = useState<string | null>(null)
   const [, setLoading] = useState(true);
   const { theme } = useTheme();
+  const [filmNews, setFilmNews] = useState<Article[]>([]);
+const [, setNewsLoading] = useState(false);
+const [, setNewsError] = useState<string | null>(null);
 
   
   useEffect(() => {
@@ -66,6 +72,20 @@ export default function HomePage() {
       }
     };
     fetchBoxOffice();
+
+    const fetchFilmNews = async () => {
+      try {
+        setNewsLoading(true);
+        const news = await newsAPI.fetchFilmNews(4); // Get 4 articles
+        setFilmNews(news);
+      } catch (err) {
+        setNewsError(err instanceof Error ? err.message : 'Failed to fetch film news');
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+    
+    fetchFilmNews();
   }, []);
 
   const handleSearch = async () => {
@@ -200,7 +220,16 @@ export default function HomePage() {
               )}
             </section>
 
-            <div className="container mx-auto px-4 py-8">
+            
+
+            <NewsSection 
+          articles={filmNews}
+          title="🎬 Film Industry News"
+          subtitle="Production updates, box office results"
+          theme={theme}
+        />
+
+    <div className="container mx-auto px-4 py-8">
       <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -289,6 +318,8 @@ export default function HomePage() {
             </section>
           </>
         )}
+
+        
       </div>
     </div>
   );

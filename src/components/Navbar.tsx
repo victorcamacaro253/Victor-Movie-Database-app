@@ -1,5 +1,5 @@
 import { Link, NavLinkProps, useLocation } from 'react-router-dom';
-import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon, MenuIcon,XCloseIcon } from '../components/Icons';
+import { FilmIcon, MoonIcon, SunIcon, SearchIcon, HomeIcon, BookmarkIcon, TvIcon, MenuIcon, XCloseIcon,NewsIcon } from '../components/Icons';
 import { getFlagEmoji } from '../utils/languageUtils';
 import { JSX, useState } from 'react'; // Add this import
 import  {useTheme} from '../context/ThemeContext';
@@ -73,6 +73,13 @@ export default function Navbar() {
               theme={theme}
               icon={<TvIcon className="w-5 h-5" />}
               label={t('tv.shows')}
+            />
+            <NavLink 
+              to="/news" 
+              active={isActive('/news')}
+              theme={theme}
+              icon={<NewsIcon className="w-5 h-5" />}
+              label={t('News')}
             />
             <NavLink 
               to="/favorites" 
@@ -163,6 +170,14 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               />
               <MobileNavLink 
+                to="/news" 
+                active={isActive('/news')}
+                theme={theme}
+                icon={<NewsIcon className="w-5 h-5" />}
+                label={t('News')}
+                onClick={() => setMobileMenuOpen(false)}
+              />
+               <MobileNavLink 
                 to="/favorites" 
                 active={isActive('/favorites')}
                 theme={theme}

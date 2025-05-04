@@ -11,6 +11,7 @@
     "inittail": "tailwindcss init -p"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.2",
     "autoprefixer": "^10.4.20",
     "axios": "^1.8.1",
     "postcss": "^8.5.3",

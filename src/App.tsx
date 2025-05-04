@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/Home';
 import MovieDetailsPage from './pages/MovieDetails';
+import NewsPage from './pages/NewsPage';
 import FavoritesPage from './pages/Favorites';
 import ActorDetailsPage from './pages/ActorDetails';
 import TVShowDetailsPage from './pages/TVShowDetails';
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/tv/:id" element={<TVShowDetailsPage />} />
                 <Route path="/movies" element={<MoviePage />} />
                 <Route path="/top-movies" element={<TopMoviesPage />} />
+                <Route path="/news" element={<NewsPage />} />
                 {/* Add more routes as needed */}
               </Routes>
             </main>

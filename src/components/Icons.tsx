@@ -230,3 +230,24 @@ export function TrendingUpIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+
+export function NewsIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="w-5 h-5"
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 3v11.25a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25V3m-16.5 0h16.5m-16.5 0a2.25 2.25 0 00-2.25 2.25v11.25A2.25 2.25 0 003.75 18.75h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25m-12 6h7.5m-7.5 3h7.5m-7.5-6h7.5"
+      />
+    </svg>
+  );
+}
