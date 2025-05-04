@@ -174,7 +174,7 @@ export default function TVShowDetailsPage() {
             </div>
 
             {/* Rating and Runtime */}
-            <div className="flex items-center gap-6 mb-6">
+            <div className="flex flex-wrap items-center gap-6 mb-6">
               <div className={`flex items-center gap-2 ${themeClasses.text}`}>
                 <StarIcon className="w-5 h-5 text-yellow-500" />
                 <span className="font-bold">{tvShow.vote_average.toFixed(1)}</span>
@@ -193,7 +193,7 @@ export default function TVShowDetailsPage() {
                   {tvShow.watch_providers?.results?.US?.flatrate?.length ? (
                     <div className="flex items-center gap-2">
                       {tvShow.watch_providers?.results?.US?.flatrate?.length > 0 && (
-  <div className="flex items-center gap-2">
+  <div className="flex flex-wrap items-center gap-2">
     {tvShow.watch_providers.results.US.flatrate.map(provider => (
       <img
         key={provider.provider_id}

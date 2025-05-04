@@ -136,7 +136,7 @@ export default function MovieDetailsPage() {
             </div>
 
             {/* Rating and Runtime */}
-            <div className="flex items-center gap-6 mb-6">
+            <div className="flex flex-wrap items-center gap-6 mb-6">
               <div className={`flex items-center gap-2 ${themeClasses.text}`}>
                 <StarIcon className="w-5 h-5 text-yellow-500" />
                 <span className="font-bold">{movie.vote_average.toFixed(1)}</span>
