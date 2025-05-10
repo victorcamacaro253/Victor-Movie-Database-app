@@ -6,7 +6,7 @@ import MovieCard from '../components/MovieCard';
 import { MediaCard } from '../components/MediaCard';
 import SearchBar from '../components/SearchBar';
 import SectionHeader from '../components/SectionHeader';
-import { fetchDomesticBoxOffice,fetchWorldwideBoxOffice,fetchDailyBoxOffice,fetchWeekendBoxOffice } from '../api/boxOffice';      
+import { fetchDomesticBoxOffice, fetchWorldwideBoxOffice, fetchDailyBoxOffice, fetchWeekendBoxOffice } from '../api/boxOffice';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useState } from 'react';
@@ -23,18 +23,18 @@ import { Article } from '../api/news';
 export default function HomePage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { 
+  const {
     trendingMovies,
-    popularMovies, 
-    upcomingMovies, 
+    popularMovies,
+    upcomingMovies,
     nowPlayingMovies,
-    loading: initialLoading, 
-    error: initialError 
+    loading: initialLoading,
+    error: initialError
   } = useTmdbMovies();
-  
+
   const [query, setQuery] = useState('');
- // const [searchResults, setSearchResults] = useState<Movie[]>([]);
- const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  // const [searchResults, setSearchResults] = useState<Movie[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -46,15 +46,15 @@ export default function HomePage() {
   const [, setLoading] = useState(true);
   const { theme } = useTheme();
   const [filmNews, setFilmNews] = useState<Article[]>([]);
-const [, setNewsLoading] = useState(false);
-const [, setNewsError] = useState<string | null>(null);
+  const [, setNewsLoading] = useState(false);
+  const [, setNewsError] = useState<string | null>(null);
 
-  
+
   useEffect(() => {
     const fetchBoxOffice = async () => {
       try {
         setLoading(true);
-        const [worldwide, domestic,daily,weekend] = await Promise.all([
+        const [worldwide, domestic, daily, weekend] = await Promise.all([
           fetchWorldwideBoxOffice(),
           fetchDomesticBoxOffice(),
           fetchDailyBoxOffice(),
@@ -76,18 +76,18 @@ const [, setNewsError] = useState<string | null>(null);
     const fetchFilmNews = async () => {
       try {
         setNewsLoading(true);
-    //    const news = await newsAPI.fetchFilmNews(4); // Get 4 articles
-    const response = await fetch('/.netlify/functions/getNews?type=film&limit=4');
-    const data = await response.json();
-    console.log('news',data)
-    setFilmNews(data);
+        //    const news = await newsAPI.fetchFilmNews(4); // Get 4 articles
+        const response = await fetch('/.netlify/functions/getNews?type=film&limit=4');
+        const data = await response.json();
+        console.log('news', data)
+        setFilmNews(data);
       } catch (err) {
         setNewsError(err instanceof Error ? err.message : 'Failed to fetch film news');
       } finally {
         setNewsLoading(false);
       }
     };
-    
+
     fetchFilmNews();
   }, []);
 
@@ -101,10 +101,10 @@ const [, setNewsError] = useState<string | null>(null);
       setIsSearching(true);
       setSearchLoading(true);
       setSearchError(null);
-      
-    //  const { movies: results } = await searchMovies(query);
-    const results = await searchMulti(query);
-    console.log(results)
+
+      //  const { movies: results } = await searchMovies(query);
+      const results = await searchMulti(query);
+      console.log(results)
       setSearchResults(results);
     } catch (err) {
       setSearchError('Failed to fetch search results');
@@ -138,10 +138,10 @@ const [, setNewsError] = useState<string | null>(null);
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('discover.title')}</h1>
-        <p className="text-lg mb-6">{t('discover.subtitle')}</p>
-          
-          <SearchBar 
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('discover.title')}</h1>
+          <p className="text-lg mb-6">{t('discover.subtitle')}</p>
+
+          <SearchBar
             query={query}
             onQueryChange={setQuery}
             onSearch={handleSearch}
@@ -160,19 +160,19 @@ const [, setNewsError] = useState<string | null>(null);
 
         {isSearching ? (
           <>
-            <SectionHeader 
+            <SectionHeader
               title={`${t('search.results')} "${query}"`}
               count={searchResults.length}
             />
-            
+
             {searchResults.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {searchResults.map((item) => (
-                  <MediaCard 
-                  key={`${item.type}-${item.id}`}
-                  item={item}
-                  onClick={() => navigate(`/${item.type}/${item.id}`)}
-                />
+                  <MediaCard
+                    key={`${item.type}-${item.id}`}
+                    item={item}
+                    onClick={() => navigate(`/${item.type}/${item.id}`)}
+                  />
                 ))}
               </div>
             ) : (
@@ -185,35 +185,34 @@ const [, setNewsError] = useState<string | null>(null);
           <>
             {/* Popular Movies Section */}
             <section className="mb-12">
-              <SectionHeader 
+              <SectionHeader
                 title={t('popular.movies')}
                 count={popularMovies.length}
                 viewAllLink="/top-movies"
               />
-              
+
               {trendingMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {trendingMovies.slice(0, 10).map((movie,index) => (
+                  {trendingMovies.slice(0, 10).map((movie, index) => (
                     <div key={movie.id} className="relative">
-                       <span className={`absolute -top-2 -left-2 z-10 rounded-full ${
-                index < 3 
-                  ? 'bg-yellow-500 text-white' 
-                  : theme === 'dark' 
-                    ? 'bg-gray-700 text-gray-300' 
-                    : 'bg-gray-200 text-gray-800'
-                } w-8 h-8 flex items-center justify-center font-bold`}>
-                {index + 1}
-              </span>
-                     <MovieCard 
-                      key={movie.imdbID} 
-                      movie={movie}
-                      showRating={true}
-                      showPopularity={true}
-                      onClick={() => navigate(`/movie/${movie.imdbID}`)}
-                    />
+                      <span className={`absolute -top-2 -left-2 z-10 rounded-full ${index < 3
+                          ? 'bg-yellow-500 text-white'
+                          : theme === 'dark'
+                            ? 'bg-gray-700 text-gray-300'
+                            : 'bg-gray-200 text-gray-800'
+                        } w-8 h-8 flex items-center justify-center font-bold`}>
+                        {index + 1}
+                      </span>
+                      <MovieCard
+                        key={movie.imdbID}
+                        movie={movie}
+                        showRating={true}
+                        showPopularity={true}
+                        onClick={() => navigate(`/movie/${movie.imdbID}`)}
+                      />
                     </div>
-                    
-                   
+
+
                   ))}
                 </div>
               ) : (
@@ -223,58 +222,58 @@ const [, setNewsError] = useState<string | null>(null);
               )}
             </section>
 
-            
 
-            <NewsSection 
-                articles={filmNews}
-                title="🎬 Film Industry News"
-                subtitle="Production updates, box office results"
-                theme={theme} showViewAll={false}        />
 
-    <div className="container mx-auto px-4 py-8">
-      <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      {dailyData && (
-          <BoxOfficeCard
-            title="Daily (US) Box Office"
-            data={dailyData.data}
-            lastUpdated={dailyData.lastUpdated}
-            isDailyData={true}
-          />
-        )}
-      {weekendData && (
-          <BoxOfficeCard
-            title="Weekend (US) Box Office"
-            data={weekendData.data}
-            lastUpdated={weekendData.lastUpdated}
-          />
-        )}
-        {domesticData && (
-          <BoxOfficeCard
-            title="Domestic (US) Box Office"
-            data={domesticData.data}
-            lastUpdated={domesticData.lastUpdated}
-          />
-        )}
-        
-        {worldwideData && (
-          <BoxOfficeCard
-            title="Worldwide Box Office"
-            data={worldwideData.data}
-            lastUpdated={worldwideData.lastUpdated}
-          />
-        )}
-      </div>
-    </div>
-  
+            <NewsSection
+              articles={filmNews}
+              title="🎬 Film Industry News"
+              subtitle="Production updates, box office results"
+              theme={theme} showViewAll={false} />
+
+            <div className="container mx-auto px-4 py-8">
+              <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
+
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {dailyData && (
+                  <BoxOfficeCard
+                    title="Daily (US) Box Office"
+                    data={dailyData.data}
+                    lastUpdated={dailyData.lastUpdated}
+                    isDailyData={true}
+                  />
+                )}
+                {weekendData && (
+                  <BoxOfficeCard
+                    title="Weekend (US) Box Office"
+                    data={weekendData.data}
+                    lastUpdated={weekendData.lastUpdated}
+                  />
+                )}
+                {domesticData && (
+                  <BoxOfficeCard
+                    title="Domestic (US) Box Office"
+                    data={domesticData.data}
+                    lastUpdated={domesticData.lastUpdated}
+                  />
+                )}
+
+                {worldwideData && (
+                  <BoxOfficeCard
+                    title="Worldwide Box Office"
+                    data={worldwideData.data}
+                    lastUpdated={worldwideData.lastUpdated}
+                  />
+                )}
+              </div>
+            </div>
+
 
             {/* Now Playing Movies Section */}
             <section className="mb-12">
               <SectionHeader
-              title="Now Playing Movies"
-              count={nowPlayingMovies.length}
-              viewAllLink="/now-playing"
+                title="Now Playing Movies"
+                count={nowPlayingMovies.length}
+                viewAllLink="/now-playing"
               />
               {nowPlayingMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
@@ -282,7 +281,7 @@ const [, setNewsError] = useState<string | null>(null);
                     <MovieCard
                       key={movie.imdbID}
                       movie={movie}
-                      
+
                       onClick={() => navigate(`/movie/${movie.imdbID}`)}
                     />
                   ))}
@@ -296,17 +295,17 @@ const [, setNewsError] = useState<string | null>(null);
 
             {/* Upcoming Movies Section */}
             <section className="mb-12">
-              <SectionHeader 
+              <SectionHeader
                 title={t('upcoming.movies')}
                 count={upcomingMovies.length}
                 viewAllLink="/upcoming"
               />
-              
+
               {upcomingMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                   {upcomingMovies.slice(0, 10).map((movie) => (
-                    <MovieCard 
-                      key={movie.imdbID} 
+                    <MovieCard
+                      key={movie.imdbID}
                       movie={movie}
                       onClick={() => navigate(`/movie/${movie.imdbID}`)}
                     />
@@ -321,7 +320,7 @@ const [, setNewsError] = useState<string | null>(null);
           </>
         )}
 
-        
+
       </div>
     </div>
   );
