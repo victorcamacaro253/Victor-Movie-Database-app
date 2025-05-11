@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { Article } from '../api/news';
 import { NewsSection } from '../components/newsSection';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { Tab } from '@headlessui/react';
 
 export default function NewsPage() {
   const { theme } = useTheme();
+  const { t, language } = useLanguage(); // Add this line to use the language context
   const [filmNews, setFilmNews] = useState<Article[]>([]);
   const [tvNews, setTVNews] = useState<Article[]>([]);
   const [entertainmentNews, setEntertainmentNews] = useState<Article[]>([]);
@@ -16,36 +18,58 @@ export default function NewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
 
-  useEffect(() => {
-    // In your fetchAllNews function
-const fetchAllNews = async () => {
-    try {
-      setLoading(true);
-      const [film, tv, entertainment] = await Promise.all([
-        fetch('/.netlify/functions/getNews?type=film&limit=12').then(res => res.json()),
-        fetch('/.netlify/functions/getNews?type=tv&limit=12').then(res => res.json()),
-        fetch('/.netlify/functions/getNews?type=entertainment&limit=12').then(res => res.json())
-      ]);
-      setFilmNews(film);
-      console.log('film',film)
-      setTVNews(tv);
-      setEntertainmentNews(entertainment);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load news');
-    } finally {
-      setLoading(false);
+  // Translations for tab categories
+  const tabCategories = [
+    t('news.tabs.all'),
+    t('news.tabs.film'),
+    t('news.tabs.tv'),
+    t('news.tabs.entertainment')
+  ];
+
+  // Translations for section titles and subtitles
+  const sectionTranslations = {
+    film: {
+      title: t('news.sections.film.title'),
+      subtitle: t('news.sections.film.subtitle')
+    },
+    tv: {
+      title: t('news.sections.tv.title'),
+      subtitle: t('news.sections.tv.subtitle')
+    },
+    entertainment: {
+      title: t('news.sections.entertainment.title'),
+      subtitle: t('news.sections.entertainment.subtitle')
     }
   };
 
+  useEffect(() => {
+    const fetchAllNews = async () => {
+      try {
+        setLoading(true);
+        const [film, tv, entertainment] = await Promise.all([
+          fetch(`/.netlify/functions/getNews?type=film&limit=12&lang=${language}`).then(res => res.json()),
+          fetch(`/.netlify/functions/getNews?type=tv&limit=12&lang=${language}`).then(res => res.json()),
+          fetch(`/.netlify/functions/getNews?type=entertainment&limit=12&lang=${language}`).then(res => res.json())
+        ]);
+        setFilmNews(film);
+        setTVNews(tv);
+        setEntertainmentNews(entertainment);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t('news.error.loading'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAllNews();
-  }, []);
+  }, [language]); // Add language as a dependency to refetch news when language changes
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <LoadingSpinner size="lg" />
         <p className={`mt-4 text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-          Loading latest entertainment news...
+          {t('news.loading')}
         </p>
       </div>
     );
@@ -63,7 +87,7 @@ const fetchAllNews = async () => {
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           } transition-colors`}
         >
-          Try Again
+          {t('news.tryAgain')}
         </button>
       </div>
     );
@@ -80,12 +104,12 @@ const fetchAllNews = async () => {
             <h1 className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              Entertainment News
+              {t('news.title')}
             </h1>
             <p className={`mt-6 max-w-3xl mx-auto text-xl ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              Stay updated with the latest from Hollywood, TV industry, and celebrity world
+              {t('news.subtitle')}
             </p>
           </div>
         </div>
@@ -97,7 +121,7 @@ const fetchAllNews = async () => {
           <Tab.List className={`flex space-x-1 rounded-xl p-1 ${
             theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
           }`}>
-            {['All News', 'Film', 'TV', 'Entertainment'].map((category) => (
+            {tabCategories.map((category) => (
               <Tab
                 key={category}
                 className={({ selected }) => 
@@ -124,8 +148,8 @@ const fetchAllNews = async () => {
         {(activeTab === 0 || activeTab === 1) && (
           <NewsSection 
             articles={filmNews}
-            title="🎬 Film Industry News"
-            subtitle="Latest production updates, box office results, and studio news"
+            title={sectionTranslations.film.title}
+            subtitle={sectionTranslations.film.subtitle}
             theme={theme}
             showViewAll={activeTab !== 1}
           />
@@ -134,8 +158,8 @@ const fetchAllNews = async () => {
         {(activeTab === 0 || activeTab === 2) && (
           <NewsSection 
             articles={tvNews}
-            title="📺 TV Industry News"
-            subtitle="Streaming wars, ratings, renewals and cancellations"
+            title={sectionTranslations.tv.title}
+            subtitle={sectionTranslations.tv.subtitle}
             theme={theme}
             showViewAll={activeTab !== 2}
           />
@@ -144,8 +168,8 @@ const fetchAllNews = async () => {
         {(activeTab === 0 || activeTab === 3) && (
           <NewsSection 
             articles={entertainmentNews}
-            title="🌟 Entertainment News"
-            subtitle="Celebrity updates, events, awards and red carpet moments"
+            title={sectionTranslations.entertainment.title}
+            subtitle={sectionTranslations.entertainment.subtitle}
             theme={theme}
             showViewAll={activeTab !== 3}
           />
@@ -161,17 +185,17 @@ const fetchAllNews = async () => {
             <h2 className={`text-3xl font-extrabold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              Stay Updated
+              {t('news.newsletter.title')}
             </h2>
             <p className={`mt-4 text-lg ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              Get the latest entertainment news delivered to your inbox
+              {t('news.newsletter.subtitle')}
             </p>
             <div className="mt-8 max-w-md mx-auto flex">
               <input
                 type="email"
-                placeholder="Your email address"
+                placeholder={t('news.newsletter.placeholder')}
                 className={`flex-1 min-w-0 rounded-l-md border ${
                   theme === 'dark' 
                     ? 'bg-gray-700 border-gray-600 text-white' 
@@ -186,7 +210,7 @@ const fetchAllNews = async () => {
                     : 'bg-blue-500 hover:bg-blue-600 text-white'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               >
-                Subscribe
+                {t('news.newsletter.button')}
               </button>
             </div>
           </div>
