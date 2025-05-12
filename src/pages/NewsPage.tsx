@@ -97,23 +97,37 @@ export default function NewsPage() {
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Hero Header */}
       <div className={`relative overflow-hidden ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+}`}>
+  {/* Background image with overlay for better text contrast */}
+  <div className={`absolute inset-0 bg-cover bg-center z-0 ${
+    theme === 'dark' ? 'opacity-60' : 'opacity-10'
+  }`} 
+  style={{ 
+    backgroundImage: "url('../../assets/images/hollywood3.jpg')",
+    // Or use a local image: backgroundImage: "url('/images/news-hero-bg.jpg')"
+  }}></div>
+  
+  {/* Semi-transparent overlay for better text readability - adjust as needed */}
+  <div className={`absolute inset-0 ${
+    theme === 'dark' ? 'bg-gray-900/60' : 'bg-white/30'
+  } z-0`}></div>
+
+  <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8 relative z-10">
+    <div className="text-center">
+      <h1 className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${
+        theme === 'dark' ? 'text-white' : 'text-gray-900'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {t('news.title')}
-            </h1>
-            <p className={`mt-6 max-w-3xl mx-auto text-xl ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              {t('news.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+        {t('news.title')}
+      </h1>
+      <p className={`mt-6 max-w-3xl mx-auto text-xl ${
+        theme === 'dark' ? 'text-gray-100' : 'text-gray-800' // Slightly darker for better contrast
+      }`}>
+        {t('news.subtitle')}
+      </p>
+    </div>
+  </div>
+</div>
 
       {/* Tab Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
