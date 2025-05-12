@@ -57,7 +57,12 @@ const translations = {
     'news.newsletter.title': 'Stay Updated',
     'news.newsletter.subtitle': 'Get the latest entertainment news delivered to your inbox',
     'news.newsletter.placeholder': 'Your email address',
-    'news.newsletter.button': 'Subscribe'
+    'news.newsletter.button': 'Subscribe',
+    'boxOffice.title': 'Box Office Rankings',
+    'boxOffice.daily': 'Daily (US) Box Office',
+    'boxOffice.weekend': 'Weekend (US) Box Office',
+    'boxOffice.domestic': 'Domestic (US) Box Office',
+    'boxOffice.worldwide': 'Worldwide Box Office',
   },
   es: {
     'discover.title': 'Descubre Películas y Series',
@@ -101,7 +106,12 @@ const translations = {
     'news.newsletter.title': 'Mantente Actualizado',
     'news.newsletter.subtitle': 'Recibe las últimas noticias de entretenimiento en tu correo',
     'news.newsletter.placeholder': 'Tu dirección de correo',
-    'news.newsletter.button': 'Suscribirse'
+    'news.newsletter.button': 'Suscribirse',
+     'boxOffice.title': 'Ranking de Taquilla',
+    'boxOffice.daily': 'Taquilla Diaria (EEUU)',
+    'boxOffice.weekend': 'Taquilla de Fin de Semana (EEUU)',
+    'boxOffice.domestic': 'Taquilla Nacional (EEUU)',
+    'boxOffice.worldwide': 'Taquilla Mundial',
   }
 };
 

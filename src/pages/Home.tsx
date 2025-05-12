@@ -231,12 +231,12 @@ export default function HomePage() {
               theme={theme} showViewAll={false} />
 
             <div className="container mx-auto px-4 py-8">
-              <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Box Office Rankings</h1>
+              <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{t('boxOffice.title')}</h1>
 
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {dailyData && (
                   <BoxOfficeCard
-                    title="Daily (US) Box Office"
+                    title={t('boxOffice.daily')}
                     data={dailyData.data}
                     lastUpdated={dailyData.lastUpdated}
                     isDailyData={true}
@@ -244,14 +244,14 @@ export default function HomePage() {
                 )}
                 {weekendData && (
                   <BoxOfficeCard
-                    title="Weekend (US) Box Office"
+                    title={t('boxOffice.weekend')}
                     data={weekendData.data}
                     lastUpdated={weekendData.lastUpdated}
                   />
                 )}
                 {domesticData && (
                   <BoxOfficeCard
-                    title="Domestic (US) Box Office"
+                     title={t('boxOffice.domestic')}
                     data={domesticData.data}
                     lastUpdated={domesticData.lastUpdated}
                   />
@@ -259,7 +259,7 @@ export default function HomePage() {
 
                 {worldwideData && (
                   <BoxOfficeCard
-                    title="Worldwide Box Office"
+                    title={t('boxOffice.worldwide')}
                     data={worldwideData.data}
                     lastUpdated={worldwideData.lastUpdated}
                   />
