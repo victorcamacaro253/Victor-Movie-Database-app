@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { Tab } from '@headlessui/react';
+import img from '../../assets/images/hollywood3.jpg'
 
 export default function NewsPage() {
   const { theme } = useTheme();
@@ -104,7 +105,7 @@ export default function NewsPage() {
     theme === 'dark' ? 'opacity-60' : 'opacity-10'
   }`} 
   style={{ 
-    backgroundImage: "url('../../assets/images/hollywood3.jpg')",
+    backgroundImage: `url(${img})`,
     // Or use a local image: backgroundImage: "url('/images/news-hero-bg.jpg')"
   }}></div>
   
