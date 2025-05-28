@@ -11,12 +11,14 @@ import {
   fetchTopRatedTVShows,
   fetchTVShowsAiringToday,
   fetchTVShowsOnTheAir,
+  fetchTrendingTVShows
 } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
 import { getApiLanguageCode } from '../utils/languageUtils';
 import { useTheme } from '../context/ThemeContext';
 
 const tvCategories = [
+  { value: 'trending', label: 'Trending' },
   { value: 'popular', label: 'Popular' },
   { value: 'top_rated', label: 'Top Rated' },
   { value: 'airing_today', label: 'Airing Today' },
@@ -44,7 +46,7 @@ export default function TVPage() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { theme } = useTheme();
-  const [category, setCategory] = useState('popular');
+  const [category, setCategory] = useState('trending');
   const [year, setYear] = useState('');
   const [sortBy, setSortBy] = useState('popularity.desc');
   const [page, setPage] = useState(1);
@@ -73,6 +75,9 @@ export default function TVPage() {
         
         let response;
         switch (category) {
+          case 'trending':
+            response = await fetchTrendingTVShows('week',page, apiLanguage);
+            break;
           case 'popular':
             response = await fetchPopularTVShows(page, apiLanguage);
             break;
@@ -86,7 +91,7 @@ export default function TVPage() {
             response = await fetchTVShowsOnTheAir(page, apiLanguage);
             break;
           default:
-            response = await fetchPopularTVShows(page, apiLanguage);
+            response = await fetchTrendingTVShows('week',page, apiLanguage);
         }
 
         if ('results' in response && response.results) {
@@ -102,7 +107,6 @@ export default function TVPage() {
         setLoading(false);
       }
     };
-
     fetchTVShows();
   }, [category, page, year, sortBy, language, t]);
 

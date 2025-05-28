@@ -14,10 +14,12 @@ import {
   fetchUpcomingMovies,
   fetchTopRatedMovies,
   fetchNowPlayingMovies,
+  fetchTrendingMovies
 
 } from '../api/tmdb';
 
 const movieCategories = [
+  { value: 'trending', label: 'Trending' },
   { value: 'popular', label: 'Popular' },
   { value: 'now_playing', label: 'Now Playing' },
   { value: 'upcoming', label: 'Upcoming' },
@@ -45,7 +47,7 @@ export default function MoviesPage() {
 //  const { t } = useLanguage();
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const [category, setCategory] = useState('popular');
+  const [category, setCategory] = useState('trending');
   const [year, setYear] = useState('');
   const [sortBy, setSortBy] = useState('popularity.desc');
   const [page, setPage] = useState(1);
@@ -62,6 +64,9 @@ export default function MoviesPage() {
         
         let response;
         switch (category) {
+          case 'trending':
+            response = await fetchTrendingMovies('week',page);
+            break;
           case 'popular':
             response = await fetchPopularMovies(page);
             break;

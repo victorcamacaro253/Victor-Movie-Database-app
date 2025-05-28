@@ -355,6 +355,46 @@ export const fetchTVShowsOnTheAir = async (page: number = 1, language: string = 
   return await response.json();
 };
 
+export const fetchTrendingTVShows = async (timeWindow: 'day' | 'week' = 'week', page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/trending/tv/${timeWindow}?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch trending TV shows');
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+
+// You can also get trending for all media types (movies + TV)
+export const fetchTrendingAll = async (timeWindow: 'day' | 'week' = 'week', page: number = 1, language: string = 'en-US'): Promise<any> => {
+  const response = await fetch(
+    `${BASE_URL}/trending/all/${timeWindow}?api_key=${TMDB_API_KEY}&language=${language}&page=${page}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch trending content');
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const fetchTopTVShows = async (sortBy: string = 'popularity.desc', page: number = 1, language: string = 'en-US'): Promise<TVShowResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&vote_count.gte=100&language=${language}&page=${page}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch top TV shows');
+  }
+
+  const data = await response.json();
+  return data;
+};
 
 // Helper function to convert TMDb movie to your existing Movie type
 export const mapTmdbToMovie = (tmdbMovie: TmdbMovie): Movie => ({
