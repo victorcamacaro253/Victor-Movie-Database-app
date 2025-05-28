@@ -1,5 +1,5 @@
 // src/pages/HomePage.tsx
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useTmdbMovies } from '../hooks/useTmdbMovies';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
@@ -9,7 +9,7 @@ import SectionHeader from '../components/SectionHeader';
 import { fetchDomesticBoxOffice, fetchWorldwideBoxOffice, fetchDailyBoxOffice, fetchWeekendBoxOffice } from '../api/boxOffice';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 //import { searchMovies } from '../api/movies';
 import { searchMulti } from '../api/tmdb';
 import { useLanguage } from '../context/LanguageContext';
@@ -49,6 +49,64 @@ export default function HomePage() {
   const [, setNewsLoading] = useState(false);
   const [, setNewsError] = useState<string | null>(null);
 
+  // Add debounce ref for real-time search
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(async (searchQuery: string) => {
+    if (!searchQuery.trim()) {
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      setSearchError(null);
+      setIsSearching(true);
+
+      const results = await searchMulti(searchQuery);
+      console.log(results);
+      setSearchResults(results);
+    } catch (err) {
+      setSearchError('Failed to fetch search results');
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, []);
+
+  // Handle real-time search with debouncing
+  const handleQueryChange = useCallback((newQuery: string) => {
+    setQuery(newQuery);
+
+    // Clear previous timeout
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // If query is empty, clear results immediately
+    if (!newQuery.trim()) {
+      setIsSearching(false);
+      setSearchResults([]);
+      setSearchError(null);
+      return;
+    }
+
+    // Set new timeout for debounced search
+    debounceRef.current = setTimeout(() => {
+      debouncedSearch(newQuery);
+    }, 300); // 300ms delay
+  }, [debouncedSearch]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchBoxOffice = async () => {
@@ -92,31 +150,22 @@ export default function HomePage() {
   }, []);
 
   const handleSearch = async () => {
+    // This function can now be used for explicit search (like pressing Enter)
     if (!query.trim()) {
       setIsSearching(false);
       return;
     }
 
-    try {
-      setIsSearching(true);
-      setSearchLoading(true);
-      setSearchError(null);
-
-      //  const { movies: results } = await searchMovies(query);
-      const results = await searchMulti(query);
-      console.log(results)
-      setSearchResults(results);
-    } catch (err) {
-      setSearchError('Failed to fetch search results');
-      setSearchResults([]);
-    } finally {
-      setSearchLoading(false);
+    // Clear any pending debounced search
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
+
+    // Execute search immediately
+    await debouncedSearch(query);
   };
 
-  // Combined loading state
-  const isLoading = initialLoading || searchLoading;
-
+ 
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -143,7 +192,7 @@ export default function HomePage() {
 
           <SearchBar
             query={query}
-            onQueryChange={setQuery}
+            onQueryChange={handleQueryChange} // Updated to use real-time handler
             onSearch={handleSearch}
             loading={searchLoading}
           />
@@ -165,7 +214,12 @@ export default function HomePage() {
               count={searchResults.length}
             />
 
-            {searchResults.length > 0 ? (
+            {searchLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <LoadingSpinner size="md" />
+                <span className="ml-2 text-gray-600 dark:text-gray-400">Searching...</span>
+              </div>
+            ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {searchResults.map((item) => (
                   <MediaCard
@@ -177,7 +231,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                {isLoading ? 'Searching...' : 'No movies found matching your search'}
+                No movies or series found matching your search
               </div>
             )}
           </>
@@ -325,6 +379,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
-
