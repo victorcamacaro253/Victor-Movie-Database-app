@@ -49,7 +49,7 @@ export default function NewsPage() {
         setLoading(true);
         const [film, tv, entertainment] = await Promise.all([
           fetch(`/.netlify/functions/getNews?type=film&limit=12&lang=${language}`).then(res => res.json()),
-          fetch(`/.netlify/functions/getNews?type=tv&limit=12&lang=${language}`).then(res => res.json()),
+          fetch(`/.netlify/functions  /getNews?type=tv&limit=12&lang=${language}`).then(res => res.json()),
           fetch(`/.netlify/functions/getNews?type=entertainment&limit=12&lang=${language}`).then(res => res.json())
         ]);
         setFilmNews(film);
