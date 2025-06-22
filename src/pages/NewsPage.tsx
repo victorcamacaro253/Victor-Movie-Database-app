@@ -49,7 +49,7 @@ export default function NewsPage() {
         setLoading(true);
         const [film, tv, entertainment] = await Promise.all([
           fetch(`/.netlify/functions/getNews?type=film&limit=12&lang=${language}`).then(res => res.json()),
-          fetch(`/.netlify/functions  /getNews?type=tv&limit=12&lang=${language}`).then(res => res.json()),
+          fetch(`/.netlify/functions/getNews?type=tv&limit=12&lang=${language}`).then(res => res.json()),
           fetch(`/.netlify/functions/getNews?type=entertainment&limit=12&lang=${language}`).then(res => res.json())
         ]);
         setFilmNews(film);
@@ -82,11 +82,10 @@ export default function NewsPage() {
         <ErrorMessage message={error} />
         <button
           onClick={() => window.location.reload()}
-          className={`mt-4 px-4 py-2 rounded-lg ${
-            theme === 'dark' 
-              ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+          className={`mt-4 px-4 py-2 rounded-lg ${theme === 'dark'
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
               : 'bg-blue-500 hover:bg-blue-600 text-white'
-          } transition-colors`}
+            } transition-colors`}
         >
           {t('news.tryAgain')}
         </button>
@@ -97,57 +96,50 @@ export default function NewsPage() {
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Hero Header */}
-      <div className={`relative overflow-hidden ${
-  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-}`}>
-  {/* Background image with overlay for better text contrast */}
-  <div className={`absolute inset-0 bg-cover bg-center z-0 ${
-    theme === 'dark' ? 'opacity-60' : 'opacity-10'
-  }`} 
-  style={{ 
-    backgroundImage: `url(${img})`,
-    // Or use a local image: backgroundImage: "url('/images/news-hero-bg.jpg')"
-  }}></div>
-  
-  {/* Semi-transparent overlay for better text readability - adjust as needed */}
-  <div className={`absolute inset-0 ${
-    theme === 'dark' ? 'bg-gray-900/60' : 'bg-white/30'
-  } z-0`}></div>
+      <div className={`relative overflow-hidden ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
+        {/* Background image with overlay for better text contrast */}
+        <div className={`absolute inset-0 bg-cover bg-center z-0 ${theme === 'dark' ? 'opacity-60' : 'opacity-10'
+          }`}
+          style={{
+            backgroundImage: `url(${img})`,
+            // Or use a local image: backgroundImage: "url('/images/news-hero-bg.jpg')"
+          }}></div>
 
-  <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8 relative z-10">
-    <div className="text-center">
-      <h1 className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${
-        theme === 'dark' ? 'text-white' : 'text-gray-900'
-      }`}>
-        {t('news.title')}
-      </h1>
-      <p className={`mt-6 max-w-3xl mx-auto text-xl ${
-        theme === 'dark' ? 'text-gray-100' : 'text-gray-800' // Slightly darker for better contrast
-      }`}>
-        {t('news.subtitle')}
-      </p>
-    </div>
-  </div>
-</div>
+        {/* Semi-transparent overlay for better text readability - adjust as needed */}
+        <div className={`absolute inset-0 ${theme === 'dark' ? 'bg-gray-900/60' : 'bg-white/30'
+          } z-0`}></div>
+
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center">
+            <h1 className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+              {t('news.title')}
+            </h1>
+            <p className={`mt-6 max-w-3xl mx-auto text-xl ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800' // Slightly darker for better contrast
+              }`}>
+              {t('news.subtitle')}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Tab Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <Tab.Group selectedIndex={activeTab} onChange={setActiveTab}>
-          <Tab.List className={`flex space-x-1 rounded-xl p-1 ${
-            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-          }`}>
+          <Tab.List className={`flex space-x-1 rounded-xl p-1 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+            }`}>
             {tabCategories.map((category) => (
               <Tab
                 key={category}
-                className={({ selected }) => 
-                  `w-full py-2.5 text-sm font-medium rounded-lg transition-all ${
-                    selected
-                      ? theme === 'dark'
-                        ? 'bg-blue-600 text-white shadow'
-                        : 'bg-white text-blue-600 shadow'
-                      : theme === 'dark'
-                        ? 'text-gray-300 hover:bg-gray-600 hover:text-white'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                className={({ selected }) =>
+                  `w-full py-2.5 text-sm font-medium rounded-lg transition-all ${selected
+                    ? theme === 'dark'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'bg-white text-blue-600 shadow'
+                    : theme === 'dark'
+                      ? 'text-gray-300 hover:bg-gray-600 hover:text-white'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`
                 }
               >
@@ -161,7 +153,7 @@ export default function NewsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {(activeTab === 0 || activeTab === 1) && (
-          <NewsSection 
+          <NewsSection
             articles={filmNews}
             title={sectionTranslations.film.title}
             subtitle={sectionTranslations.film.subtitle}
@@ -171,7 +163,7 @@ export default function NewsPage() {
         )}
 
         {(activeTab === 0 || activeTab === 2) && (
-          <NewsSection 
+          <NewsSection
             articles={tvNews}
             title={sectionTranslations.tv.title}
             subtitle={sectionTranslations.tv.subtitle}
@@ -181,7 +173,7 @@ export default function NewsPage() {
         )}
 
         {(activeTab === 0 || activeTab === 3) && (
-          <NewsSection 
+          <NewsSection
             articles={entertainmentNews}
             title={sectionTranslations.entertainment.title}
             subtitle={sectionTranslations.entertainment.subtitle}
@@ -192,38 +184,33 @@ export default function NewsPage() {
       </div>
 
       {/* Newsletter Signup */}
-      <div className={`mt-12 py-12 ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
-      }`}>
+      <div className={`mt-12 py-12 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+        }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className={`text-3xl font-extrabold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
+            <h2 className={`text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
               {t('news.newsletter.title')}
             </h2>
-            <p className={`mt-4 text-lg ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
+            <p className={`mt-4 text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              }`}>
               {t('news.newsletter.subtitle')}
             </p>
             <div className="mt-8 max-w-md mx-auto flex">
               <input
                 type="email"
                 placeholder={t('news.newsletter.placeholder')}
-                className={`flex-1 min-w-0 rounded-l-md border ${
-                  theme === 'dark' 
-                    ? 'bg-gray-700 border-gray-600 text-white' 
+                className={`flex-1 min-w-0 rounded-l-md border ${theme === 'dark'
+                    ? 'bg-gray-700 border-gray-600 text-white'
                     : 'bg-white border-gray-300 text-gray-900'
-                } px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
               <button
                 type="button"
-                className={`inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-r-md ${
-                  theme === 'dark' 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                className={`inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-r-md ${theme === 'dark'
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
                     : 'bg-blue-500 hover:bg-blue-600 text-white'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               >
                 {t('news.newsletter.button')}
               </button>
