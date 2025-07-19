@@ -49,7 +49,7 @@ export default function Footer() {
             <div className="mb-4 mt-4">
               <h4 className="text-white font-semibold mb-2">{t('supportTheProject')}</h4>
               <a 
-                href="https://paypal.me/victorcamacaro253" 
+                href="https://paypal.me/victorcamacaro253?country.x=VE&locale.x=es_XC" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
