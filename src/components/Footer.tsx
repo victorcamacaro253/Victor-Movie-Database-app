@@ -8,10 +8,14 @@ import {
   YoutubeIcon,
   TMDBLogo, 
   GlobeIcon,
+   PayPalIcon,
  
 } from "./Icons";
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
+   const {t } = useLanguage();
+  
   const currentYear = new Date().getFullYear();
 
   return (
@@ -23,21 +27,41 @@ export default function Footer() {
             <h3 className="text-white text-lg font-bold mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="hover:text-white transition-colors">Home</Link>
+                <Link to="/" className="hover:text-white transition-colors">{t('home')}</Link>
+
               </li>
               <li>
-                <Link to="/movies" className="hover:text-white transition-colors">Movies</Link>
+                <Link to="/movies" className="hover:text-white transition-colors">{t('movies')}</Link>
               </li>
               <li>
-                <Link to="/tv-shows" className="hover:text-white transition-colors">TV Shows</Link>
+                <Link to="/tv-shows" className="hover:text-white transition-colors">{t('tv.shows')}</Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors">About</Link>
+                <Link to="/about" className="hover:text-white transition-colors">{t('about')}</Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+                <Link to="/contact" className="hover:text-white transition-colors">{t('contact')}</Link>
               </li>
             </ul>
+
+            
+            {/* Support Section */}
+            <div className="mb-4 mt-4">
+              <h4 className="text-white font-semibold mb-2">{t('supportTheProject')}</h4>
+              <a 
+                href="https://paypal.me/victorcamacaro253" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+              >
+                <PayPalIcon className="w-5 h-5 mr-2" />
+               {t('donate')}
+              </a>
+              <p className="text-xs text-gray-400 mt-2">
+              {t('supportTheProjectDescription')}
+              </p>
+            </div>
+
           </div>
 
           {/* Categories */}
@@ -79,11 +103,13 @@ export default function Footer() {
                 <Link to="/dmca" className="hover:text-white transition-colors">DMCA</Link>
               </li>
             </ul>
+            
           </div>
+          
 
           {/* Social & Info */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-4">Connect With Us</h3>
+            <h3 className="text-white text-lg font-bold mb-4"> {t('connect')}</h3>
             <div className="flex space-x-4 mb-4">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 <FacebookIcon className="w-6 h-6" />
