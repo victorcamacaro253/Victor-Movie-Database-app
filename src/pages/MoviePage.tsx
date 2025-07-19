@@ -8,7 +8,7 @@ import {ErrorMessage} from '../components/ErrorMessage';
 import DropdownFilter from '../components/DropdownFilter';
 import Pagination from '../components/Pagination';
 import { useTheme } from '../context/ThemeContext';
-//import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   fetchPopularMovies,
   fetchUpcomingMovies,
@@ -44,7 +44,7 @@ const sortOptions = [
 ];
 
 export default function MoviesPage() {
-//  const { t } = useLanguage();
+  const { t } = useLanguage();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [category, setCategory] = useState('trending');
@@ -129,8 +129,8 @@ export default function MoviesPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-4 text-white">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Movies</h1>
-          <p className="text-lg">Browse thousands of movies from all genres</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">{t('movies')}</h1>
+          <p className="text-lg">{t('movie.subtitle')}</p>
         </div>
       </div>
 
